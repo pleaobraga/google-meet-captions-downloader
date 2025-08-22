@@ -1,19 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { fn } from 'storybook/test'
-
-import { Button } from './'
+import { Select } from '.'
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
-  title: 'Example/Button',
-  component: Button,
+  title: 'Component/Select',
+  component: Select,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
-  args: { onClick: fn(), children: 'Button' },
-} satisfies Meta<typeof Button>
+} satisfies Meta<typeof Select>
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -21,15 +18,13 @@ type Story = StoryObj<typeof meta>
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const Default: Story = {
   args: {
-    variant: 'default',
-    size: 'lg',
-  },
-}
-
-export const Disabled: Story = {
-  args: {
-    variant: 'default',
-    size: 'lg',
-    disabled: true,
+    label: 'Escolha a fruta',
+    options: [
+      { value: 'apple', label: 'Apple' },
+      { value: 'banana', label: 'Banana' },
+      { value: 'blueberry', label: 'Blueberry' },
+      { value: 'grapes', label: 'Grapes' },
+      { value: 'pineapple', label: 'Pineapple' },
+    ],
   },
 }
