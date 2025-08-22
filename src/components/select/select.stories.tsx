@@ -26,5 +26,6 @@ export const Default: Story = {
       { value: 'grapes', label: 'Grapes' },
       { value: 'pineapple', label: 'Pineapple' },
     ],
+    handleChange: () => {},
   },
 }

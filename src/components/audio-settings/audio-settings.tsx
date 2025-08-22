@@ -5,6 +5,10 @@ export function AudioSettings() {
   const [audioInput, setAudioInput] = useState<MediaDeviceInfo[]>([])
   const [audioOutput, setAudioOutput] = useState<MediaDeviceInfo[]>([])
 
+  const [selectedAudioInput, setSelectedAudioInput] = useState<string>()
+
+  const [selectedAudioOutput, setSelectedAudioOutput] = useState<string>()
+
   async function listAudioDevices(): Promise<MediaDeviceInfo[]> {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -64,22 +68,31 @@ export function AudioSettings() {
 
   return (
     <div className="flex flex-col gap-5">
-      <Select
-        label="Microphone"
-        emptyOption="Select a microphone"
-        options={audioInput.map((device) => ({
-          value: device.deviceId,
-          label: device.label || 'Unknown Microphone',
-        }))}
-      />
-      <Select
-        label="Speakers"
-        emptyOption="Select a speaker"
-        options={audioOutput.map((device) => ({
-          value: device.deviceId,
-          label: device.label || 'Unknown Speaker',
-        }))}
-      />
+      <div className="flex flex-col gap-3">
+        <Select
+          label="Microphone"
+          emptyOption="Select a microphone"
+          options={audioInput.map((device) => ({
+            value: device.deviceId,
+            label: device.label || 'Unknown Microphone',
+          }))}
+          handleChange={(value) => setSelectedAudioInput(value)}
+        />
+        {/* <SoundMeter micDeviceId={selectedAudioInput} /> */}
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <Select
+          handleChange={(value) => setSelectedAudioOutput(value)}
+          label="Speakers"
+          emptyOption="Select a speaker"
+          options={audioOutput.map((device) => ({
+            value: device.deviceId,
+            label: device.label || 'Unknown Speaker',
+          }))}
+        />
+        {/* <SoundMeter micDeviceId={selectedAudioOutput} /> */}
+      </div>
     </div>
   )
 }

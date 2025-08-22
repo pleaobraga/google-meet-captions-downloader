@@ -11,13 +11,20 @@ type SelectProps = React.ComponentProps<typeof BaseSelect> & {
   label: string
   options: Array<{ value: string; label: string }>
   emptyOption?: string
+  handleChange: (value: string) => void
 }
 
-export function Select({ label, options, emptyOption, ...props }: SelectProps) {
+export function Select({
+  label,
+  options,
+  emptyOption,
+  handleChange,
+  ...props
+}: SelectProps) {
   return (
     <div className="flex flex-col gap-3 items-start">
       <label>{label}</label>
-      <BaseSelect {...props}>
+      <BaseSelect {...props} onValueChange={handleChange}>
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder={emptyOption ?? label} />
         </SelectTrigger>
