@@ -10,15 +10,16 @@ import {
 type SelectProps = React.ComponentProps<typeof BaseSelect> & {
   label: string
   options: Array<{ value: string; label: string }>
+  emptyOption?: string
 }
 
-export function Select({ label, options, ...props }: SelectProps) {
+export function Select({ label, options, emptyOption, ...props }: SelectProps) {
   return (
     <div className="flex gap-5 items-center">
       <label>{label}</label>
       <BaseSelect {...props}>
         <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder={label} />
+          <SelectValue placeholder={emptyOption ?? label} />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
