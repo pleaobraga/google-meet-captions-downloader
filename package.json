@@ -16,9 +16,10 @@
   },
   "engines": {
     "node": "22.18.0",
-    "pnpm": "10.14.0"
+    "pnpm": "10.15.0"
   },
   "dependencies": {
+    "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.3",
     "@tailwindcss/vite": "^4.1.11",
     "class-variance-authority": "^0.7.1",
