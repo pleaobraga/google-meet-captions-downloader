@@ -1,11 +1,7 @@
-import './App.css'
+import { AudioSettings } from './components/audio-settings'
 
 function App() {
-  return (
-    <div>
-      <h1>Vite + React Template</h1>
-    </div>
-  )
+  return <AudioSettings />
 }
 
 export default App
