@@ -6,21 +6,28 @@ export function AudioSettings() {
   const [audioOutput, setAudioOutput] = useState<MediaDeviceInfo[]>([])
 
   async function listAudioDevices(): Promise<MediaDeviceInfo[]> {
-    await navigator.mediaDevices.getUserMedia({ audio: true })
-    const devices = await navigator.mediaDevices.enumerateDevices()
-    return devices
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      stream.getTracks().forEach((t) => t.stop())
+    } catch (err) {
+      console.error('getUserMedia failed', err)
+      return []
+    }
+
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices()
+      return devices
+    } catch (err) {
+      console.error('enumerateDevices failed', err)
+      return []
+    }
   }
 
   const getDevicesFromList = (list: MediaDeviceInfo[]) => {
     const { audioInput, audioOutput } = list.reduce(
       (acc, d) => {
-        if (d.kind === 'audioinput') {
-          acc.audioInput.push(d)
-        }
-
-        if (d.kind === 'audiooutput') {
-          acc.audioOutput.push(d)
-        }
+        if (d.kind === 'audioinput') acc.audioInput.push(d)
+        if (d.kind === 'audiooutput') acc.audioOutput.push(d)
         return acc
       },
       {
@@ -28,15 +35,29 @@ export function AudioSettings() {
         audioOutput: [] as MediaDeviceInfo[],
       }
     )
-
     setAudioInput(audioInput)
     setAudioOutput(audioOutput)
   }
 
   useEffect(() => {
-    listAudioDevices().then((devices) => {
-      getDevicesFromList(devices)
-    })
+    let mounted = true
+
+    const refresh = async () => {
+      const devices = await listAudioDevices()
+      if (mounted) getDevicesFromList(devices)
+    }
+
+    refresh()
+
+    const onChange = () => {
+      if (mounted) refresh()
+    }
+    navigator.mediaDevices?.addEventListener?.('devicechange', onChange)
+
+    return () => {
+      mounted = false
+      navigator.mediaDevices?.removeEventListener?.('devicechange', onChange)
+    }
   }, [])
 
   return (
@@ -46,7 +67,7 @@ export function AudioSettings() {
         emptyOption="Select a microphone"
         options={audioInput.map((device) => ({
           value: device.deviceId,
-          label: device.label || `Unknown Microphone`,
+          label: device.label || 'Unknown Microphone',
         }))}
       />
       <Select
@@ -54,7 +75,7 @@ export function AudioSettings() {
         emptyOption="Select a speaker"
         options={audioOutput.map((device) => ({
           value: device.deviceId,
-          label: device.label || `Unknown Speaker`,
+          label: device.label || 'Unknown Speaker',
         }))}
       />
     </div>
