@@ -7,7 +7,9 @@ export function AudioSettings() {
 
   async function listAudioDevices(): Promise<MediaDeviceInfo[]> {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      })
       stream.getTracks().forEach((t) => t.stop())
     } catch (err) {
       console.error('getUserMedia failed', err)
@@ -61,7 +63,7 @@ export function AudioSettings() {
   }, [])
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-5">
       <Select
         label="Microphone"
         emptyOption="Select a microphone"

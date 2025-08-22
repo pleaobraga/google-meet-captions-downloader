@@ -9,7 +9,9 @@
     "default_title": "Meeting Record"
   },
 
-  "permissions": ["microphone"],
+  "permissions": ["offscreen", "tabCapture", "downloads"],
+
+  "optional_host_permissions": ["https://*/*", "http://*/*"],
 
   "icons": {
     "16": "icons/icon-16.png",

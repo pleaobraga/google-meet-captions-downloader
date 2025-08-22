@@ -15,7 +15,7 @@ type SelectProps = React.ComponentProps<typeof BaseSelect> & {
 
 export function Select({ label, options, emptyOption, ...props }: SelectProps) {
   return (
-    <div className="flex gap-5 items-center">
+    <div className="flex flex-col gap-3 items-start">
       <label>{label}</label>
       <BaseSelect {...props}>
         <SelectTrigger className="w-[180px]">
