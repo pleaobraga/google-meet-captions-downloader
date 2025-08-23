@@ -1,17 +1,17 @@
 {
-  "name": "Meeting Record",
-  "description": "Record meetings and download the file",
+  "name": "Meeting Trascribe",
+  "description": "Transcribe meetings and download the file",
   "version": "1.0",
   "manifest_version": 3,
 
   "action": {
     "default_popup": "index.html",
-    "default_title": "Meeting Record"
+    "default_title": "Meeting Trascribe"
   },
 
-  "permissions": ["offscreen", "tabCapture", "downloads"],
+  "permissions": ["downloads", "scripting", "activeTab"],
 
-  "optional_host_permissions": ["https://*/*", "http://*/*"],
+  "host_permissions": ["https://*/*", "http://*/*"],
 
   "icons": {
     "16": "icons/icon-16.png",
