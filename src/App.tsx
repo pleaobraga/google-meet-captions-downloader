@@ -58,26 +58,33 @@ function App() {
   const handleButtonClick = async () => {
     setIsLoading(true)
 
-    const [tab] = await chrome.tabs.query({ active: true })
-    const [{ result }] = await chrome.scripting.executeScript({
-      target: { tabId: tab.id! },
-      func: extractCaptions,
-    })
+    try {
+      const [tab] = await chrome.tabs.query({
+        active: true,
+        currentWindow: true,
+      })
+      const [{ result }] = await chrome.scripting.executeScript({
+        target: { tabId: tab.id! },
+        func: extractCaptions,
+      })
 
-    const formatted = (result as string) || ''
-    if (!formatted) return console.warn('No captions found.')
+      const formatted = (result as string) || ''
+      if (!formatted) return console.warn('No captions found.')
 
-    // Download directly from the popup via chrome.downloads
-    const blob = new Blob([formatted], { type: 'text/plain;charset=utf-8' })
-    const url = URL.createObjectURL(blob)
-    await chrome.downloads.download({
-      url,
-      filename: defaultName(),
-      saveAs: true,
-    })
-    URL.revokeObjectURL(url)
-
-    setIsLoading(false)
+      // Download directly from the popup via chrome.downloads
+      const blob = new Blob([formatted], { type: 'text/plain;charset=utf-8' })
+      const url = URL.createObjectURL(blob)
+      await chrome.downloads.download({
+        url,
+        filename: defaultName(),
+        saveAs: true,
+      })
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Error extracting captions:', error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
