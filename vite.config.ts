@@ -25,6 +25,7 @@ export default defineConfig({
     sourcemap: true,
   },
   test: {
+    passWithNoTests: true,
     projects: [
       {
         extends: true,
