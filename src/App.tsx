@@ -1,5 +1,5 @@
 import { useState } from 'react'
-
+import { PulseLoader } from 'react-spinners'
 function App() {
   const [isLoading, setIsLoading] = useState(false)
 
@@ -14,7 +14,7 @@ function App() {
     const text = raw.replace(/\r\n?/g, '\n').trim()
 
     // A "speaker line" is a line that looks like a proper name (no trailing punctuation),
-    // e.g., "You", "Amanda Drehmer". Supports accents.
+    // e.g., "You", "Pedro". Supports accents.
     const speakerLine = /^[A-ZÀ-ÿ][\wÀ-ÿ'.-]*(?: [A-ZÀ-ÿ][\wÀ-ÿ'.-]*)*$/
 
     const lines = text.split('\n')
@@ -95,9 +95,12 @@ function App() {
         onClick={handleButtonClick}
         disabled={isLoading}
       >
-        {isLoading ? 'Loading...' : 'Get Transcription'}
+        {isLoading ? (
+          <PulseLoader color="white" size={12} />
+        ) : (
+          'Get Transcription'
+        )}
       </button>
-      {/* <PulseLoader color="white" size={12} /> */}
     </div>
   )
 }
