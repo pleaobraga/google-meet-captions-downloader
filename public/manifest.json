@@ -1,17 +1,17 @@
 {
-  "name": "Meeting Trascribe",
-  "description": "Transcribe meetings and download the file",
+  "name": "Google Meet Captions Downloader",
+  "description": "Download transcripts from Google Meet and save them as files.",
   "version": "1.0",
   "manifest_version": 3,
 
   "action": {
     "default_popup": "index.html",
-    "default_title": "Meeting Trascribe"
+    "default_title": "Google Meet Captions Downloader"
   },
 
   "permissions": ["downloads", "scripting", "activeTab"],
 
-  "host_permissions": ["https://*/*", "http://*/*"],
+  "host_permissions": ["https://meet.google.com/*", "http://meet.google.com/*"],
 
   "icons": {
     "16": "icons/icon-16.png",

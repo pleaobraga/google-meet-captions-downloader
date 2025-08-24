@@ -13,6 +13,7 @@ dist-ssr
 *.local
 
 pnpm-workspace.yaml
+*.zip
 
 # Editor directories and files
 .idea
