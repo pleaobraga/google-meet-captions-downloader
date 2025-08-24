@@ -5,8 +5,8 @@ export function getHTMLElements() {
     throw new Error('Video element not found')
   }
 
+  //current rule to get the other documents that impact on the <video> size
   const otherHeight = Number(video.style.height.split('px')[0]) - 2
-
   const otherElements = document.querySelectorAll<HTMLElement>(
     `[style*="height: ${otherHeight}px"]`
   )
