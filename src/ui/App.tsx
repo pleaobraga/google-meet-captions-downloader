@@ -5,9 +5,7 @@ function App() {
 
   async function handleButtonClick(): Promise<void> {
     setIsLoading(true)
-
     await chrome.runtime.sendMessage({ type: 'INJECT_AND_RUN' })
-
     setIsLoading(false)
   }
   return (

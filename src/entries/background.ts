@@ -1,4 +1,7 @@
-import { downloadCaptions, extractCaptions } from './captions'
+import {
+  downloadCaptions,
+  extractCaptions,
+} from '../features/captions/captions'
 
 let currentWindowId: number | undefined
 
