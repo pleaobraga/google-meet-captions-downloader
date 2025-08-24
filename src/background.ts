@@ -1,4 +1,4 @@
-import { defaultName, extractCaptions } from './captions'
+import { downloadCaptions, extractCaptions } from './captions'
 
 let currentWindowId: number | undefined
 
@@ -30,14 +30,7 @@ chrome.runtime.onMessage.addListener(async (msg) => {
     const formatted = (result as string) || ''
     if (!formatted) return console.warn('No captions found.')
 
-    const dataUrl =
-      'data:text/plain;charset=utf-8,' + encodeURIComponent(formatted)
-
-    await chrome.downloads.download({
-      url: dataUrl,
-      filename: defaultName(),
-      saveAs: true,
-    })
+    downloadCaptions(formatted)
   } catch (error) {
     console.error('Error extracting captions:', error)
   }

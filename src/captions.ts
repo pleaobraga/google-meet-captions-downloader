@@ -46,6 +46,16 @@ export function extractCaptions() {
   return blocks.map((b) => `${b.speaker}: ${b.text}`).join('\n\n')
 }
 
-export function defaultName() {
+function defaultName() {
   return `formatted-transcript-${new Date().toISOString().replace(/[:.]/g, '-')}.txt`
+}
+
+export function downloadCaptions(formatted: string) {
+  const dataUrl =
+    'data:text/plain;charset=utf-8,' + encodeURIComponent(formatted)
+  chrome.downloads.download({
+    url: dataUrl,
+    filename: defaultName(),
+    saveAs: true,
+  })
 }
