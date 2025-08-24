@@ -1,8 +1,8 @@
 {
-  "name": "vite-react-template",
+  "name": "google-meet-transcript-downloader-extension",
   "version": "1.0.0",
   "type": "module",
-  "license": "CC-BY-4.0",
+  "license": "MIT",
   "scripts": {
     "prepare": "husky",
     "dev": "vite",

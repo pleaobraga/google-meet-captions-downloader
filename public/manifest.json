@@ -1,7 +1,7 @@
 {
   "name": "Google Meet Captions Downloader",
   "description": "Download transcripts from Google Meet and save them as files.",
-  "version": "1.0",
+  "version": "1.0.0",
   "manifest_version": 3,
 
   "action": {
