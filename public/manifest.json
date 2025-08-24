@@ -4,14 +4,21 @@
   "version": "1.0.0",
   "manifest_version": 3,
 
-  "action": {
-    "default_popup": "index.html",
-    "default_title": "Google Meet Captions Downloader"
+  "action": {},
+
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
   },
 
-  "permissions": ["downloads", "scripting", "activeTab"],
+  "permissions": ["downloads", "scripting", "activeTab", "windows"],
 
-  "host_permissions": ["https://meet.google.com/*", "http://meet.google.com/*"],
+  "web_accessible_resources": [
+    {
+      "resources": ["index.html", "captions.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
 
   "icons": {
     "16": "icons/icon-16.png",
