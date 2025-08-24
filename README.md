@@ -1,82 +1,95 @@
-# ⚛️ React + Vite Template
+# 🎯 Google Meet Captions Downloader
 
-[![Node.js](https://img.shields.io/badge/node-22.18.0-blue?logo=node.js)](https://nodejs.org/)
-[![React](https://img.shields.io/badge/react-19.1.0-61DAFB?logo=react)](https://reactjs.org/)
-[![TailwindCSS](https://img.shields.io/badge/tailwindcss-4.1.11-38B2AC?logo=tailwindcss)](https://tailwindcss.com/)
-[![Vite](https://img.shields.io/badge/vite-7.0.4-646CFF?logo=vite)](https://vitejs.dev/)
-[![Storybook](https://img.shields.io/badge/storybook-9.1.0-FF4785?logo=storybook)](https://storybook.js.org/)
-[![Vitest](https://img.shields.io/badge/vitest-3.2.4-6E9F18?logo=vitest)](https://vitest.dev/)
+A Chrome extension that allows you to download transcripts from Google Meet sessions as text files.
 
-A **React + Vite** starter template to help you quickly build modern web applications with top-tier tooling and developer experience.
+## 💡 Usage
 
----
+![Extension Demo](docs/media/extension-working.gif)
+
+Follow these steps to use the extension:
+
+1. Join any Google Meet session through your web browser
+2. Click on the "Turn on captions" button (CC icon) in Google Meet to activate closed captions
+3. When you want to save the transcription:
+   - Click on the extension icon in your browser toolbar
+   - Click the "Get Transcription" button in the popup
+4. Choose where you want to save the transcription file when the download dialog appears
+5. Open the downloaded file to view your meeting's transcription
+
+> **Note:** Captions must be turned on in Google Meet for the extension to work properly.
 
 ## 🚀 Features
 
-- **React** – Build interactive UIs efficiently.
-- **Vite** – Lightning-fast development server & optimized builds.
-- **Storybook** – Develop and document components in isolation.
-- **Vitest** – Fast, Vite-native testing framework.
-- **ESLint** – Enforce code quality and style consistency.
-- **Prettier** – Automatic, opinionated code formatting.
-- **Husky** – Git hooks to automate pre-commit checks.
+- Download Google Meet captions in real-time
+- Save transcripts as text files
+- Easy-to-use popup interface
+- Works with any Google Meet session
 
----
+## 🛠️ Built With
 
-## 📦 Tooling Overview
+- **React** - UI library for building the extension interface
+- **Vite** - Next generation frontend tooling
+- **TailwindCSS** - Utility-first CSS framework
+- **TypeScript** - Static typing for JavaScript
+- **Chrome Extension APIs** - For browser integration
 
-### 🔹 [React](https://react.dev/)
+> This project was bootstrapped with [vite-react-template](https://github.com/pleaobraga/vite-react-template)
 
-A declarative JavaScript library for building UI components and SPAs.
+## 📥 Installation
 
-### 🔹 [Vite](https://vitejs.dev/)
+### For Development
 
-A fast build tool with instant dev server startup and HMR.
-
-### 🔹 [Storybook](https://storybook.js.org/)
-
-A UI development environment for building, testing, and documenting components.
-
-### 🔹 [Vitest](https://vitest.dev/)
-
-A blazing-fast unit testing framework with first-class Vite support.
-
-### 🔹 [ESLint](https://eslint.org/)
-
-Configurable linter for identifying and fixing code quality issues.
-
-### 🔹 [Prettier](https://prettier.io/)
-
-Code formatter that enforces a consistent style across your codebase.
-
-### 🔹 [Husky](https://typicode.github.io/husky/)
-
-Git hooks manager to run checks (like lint/format) before commits.
-
----
-
-## 🛠️ Getting Started
+1. Clone the repository:
 
 ```bash
-# 1. Install dependencies
-pnpm install
-
-# 2. Start the dev server
-pnpm dev
-
-# 3. Launch Storybook
-pnpm storybook
-
-# 4. Run tests
-pnpm test
+git clone https://github.com/your-username/google-meet-captions-downloader.git
+cd google-meet-captions-downloader
 ```
 
-## 📄 License
+2. Install dependencies:
 
-Licensed under the [Creative Commons Attribution 4.0 License](https://creativecommons.org/licenses/by/4.0/).
+```bash
+pnpm install
+```
+
+3. Build the extension:
+
+```bash
+pnpm build
+```
+
+### Loading the Extension in Chrome
+
+1. Open Chrome and navigate to `chrome://extensions/`
+2. Enable "Developer mode" in the top right corner
+3. Click "Load unpacked"
+4. Select the `dist` folder from your project directory
+
+## 🔄 Updating the Extension
+
+When making changes to the extension:
+
+1. Make your code changes
+2. Run the build command:
+
+```bash
+pnpm build
+```
+
+3. Go to `chrome://extensions/`
+4. Click the refresh icon on your extension's card
+
+## 💡 Usage
+
+1. Join a Google Meet session
+2. Click the extension icon in your browser toolbar
+3. When captions are available, click "Download Transcript"
+4. The transcript will be saved to your downloads folder
 
 ## 👤 Author
 
 **[pleaobraga](https://github.com/pleaobraga)**
 
-> **Note:** This template is intended to provide a solid foundation for modern React projects. Feel free to customize it to fit your needs!
+---
+
+> **Note:** This extension requires permission to access Google Meet tabs and download files. All processing is done locally in your browser.
