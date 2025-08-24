@@ -2,22 +2,6 @@
 
 A Chrome extension that allows you to download transcripts from Google Meet sessions as text files.
 
-## 💡 Usage
-
-![Extension Demo](docs/media/extension-working.gif)
-
-Follow these steps to use the extension:
-
-1. Join any Google Meet session through your web browser
-2. Click on the "Turn on captions" button (CC icon) in Google Meet to activate closed captions
-3. When you want to save the transcription:
-   - Click on the extension icon in your browser toolbar
-   - Click the "Get Transcription" button in the popup
-4. Choose where you want to save the transcription file when the download dialog appears
-5. Open the downloaded file to view your meeting's transcription
-
-> **Note:** Captions must be turned on in Google Meet for the extension to work properly.
-
 ## 🚀 Features
 
 - Download Google Meet captions in real-time
@@ -34,6 +18,22 @@ Follow these steps to use the extension:
 - **Chrome Extension APIs** - For browser integration
 
 > This project was bootstrapped with [vite-react-template](https://github.com/pleaobraga/vite-react-template)
+
+## 💡 Usage
+
+![Extension Demo](docs/media/extension-working.gif)
+
+Follow these steps to use the extension:
+
+1. Join any Google Meet session through your web browser
+2. Click on the "Turn on captions" button (CC icon) in Google Meet to activate closed captions
+3. When you want to save the transcription:
+   - Click on the extension icon in your browser toolbar
+   - Click the "Get Transcription" button in the popup
+4. Choose where you want to save the transcription file when the download dialog appears
+5. Open the downloaded file to view your meeting's transcription
+
+> **Note:** Captions must be turned on in Google Meet for the extension to work properly.
 
 ## 📥 Installation
 
