@@ -1,5 +1,6 @@
 import { downloadCaptions, extractCaptions } from '@/features/captions/captions'
 import { increaseVideoSize } from '@/features/resize-video/resize-video'
+import { errorHandler } from '@/lib/utils'
 
 let currentWindowId: number | undefined
 let videoFullStyle: string | null = null
@@ -60,41 +61,53 @@ chrome.action.onClicked.addListener(async (tab) => {
   })
 })
 
-chrome.runtime.onMessage.addListener(async (msg) => {
-  if (!currentWindowId) return console.warn('No active window ID.')
+chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
+  ;(async () => {
+    if (!currentWindowId) return console.warn('No active window ID.')
 
-  switch (msg?.type) {
-    case 'GET_CAPTIONS_TRANSCRIPT': {
-      try {
-        const [{ result }] = await chrome.scripting.executeScript({
-          target: { tabId: currentWindowId },
-          func: extractCaptions,
-        })
+    switch (message?.type) {
+      case 'GET_CAPTIONS_TRANSCRIPT': {
+        try {
+          const [{ result }] = await chrome.scripting.executeScript({
+            target: { tabId: currentWindowId },
+            func: extractCaptions,
+          })
 
-        const formatted = (result as string) || ''
-        if (!formatted) return console.warn('No captions found.')
+          const formatted = (result as string) || ''
+          if (!formatted) throw new Error('No captions found.')
 
-        downloadCaptions(formatted)
-      } catch (error) {
-        console.error('Error extracting captions:', error)
+          downloadCaptions(formatted)
+        } catch (error) {
+          const { errorMessage } = errorHandler(error)
+          sendResponse({ error: errorMessage })
+          console.error('Error extracting captions:', errorMessage)
+        }
+
+        break
       }
 
-      break
-    }
+      case 'FULL_VIDEO_SCREEN': {
+        try {
+          if (!videoFullStyle || !elementsFullStyle) {
+            console.warn('No video or elements style found.')
+            throw new Error('No video or elements style found.')
+          }
 
-    case 'FULL_VIDEO_SCREEN': {
-      if (!videoFullStyle || !elementsFullStyle) {
-        console.warn('No video or elements style found.')
-        return
+          await chrome.scripting.executeScript({
+            target: { tabId: currentWindowId },
+            args: [{ videoFullStyle, elementsFullStyle }],
+            func: increaseVideoSize,
+          })
+        } catch (error) {
+          const { errorMessage } = errorHandler(error)
+          sendResponse({ error: errorMessage })
+          console.error('Error increasing video size:', errorMessage)
+        }
+
+        break
       }
-
-      await chrome.scripting.executeScript({
-        target: { tabId: currentWindowId },
-        args: [{ videoFullStyle, elementsFullStyle }],
-        func: increaseVideoSize,
-      })
-
-      break
     }
-  }
+  })()
+
+  return true
 })
