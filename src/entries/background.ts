@@ -1,4 +1,5 @@
 import { downloadCaptions, extractCaptions } from '@/features/captions/captions'
+import { increaseVideoSize } from '@/features/resize-video/resize-video'
 
 let currentWindowId: number | undefined
 let videoFullStyle: string | null = null
@@ -63,7 +64,7 @@ chrome.runtime.onMessage.addListener(async (msg) => {
   if (!currentWindowId) return console.warn('No active window ID.')
 
   switch (msg?.type) {
-    case 'GET_CAPTIONS_TRANSCRIPT':
+    case 'GET_CAPTIONS_TRANSCRIPT': {
       try {
         const [{ result }] = await chrome.scripting.executeScript({
           target: { tabId: currentWindowId },
@@ -79,5 +80,21 @@ chrome.runtime.onMessage.addListener(async (msg) => {
       }
 
       break
+    }
+
+    case 'FULL_VIDEO_SCREEN': {
+      if (!videoFullStyle || !elementsFullStyle) {
+        console.warn('No video or elements style found.')
+        return
+      }
+
+      await chrome.scripting.executeScript({
+        target: { tabId: currentWindowId },
+        args: [{ videoFullStyle, elementsFullStyle }],
+        func: increaseVideoSize,
+      })
+
+      break
+    }
   }
 })

@@ -46,7 +46,17 @@ export function increaseVideoSize({
   videoFullStyle,
   elementsFullStyle,
 }: increaseVideoSizeParams) {
-  const { video, otherElements } = getHTMLElements()
+  const video = document.querySelector<HTMLVideoElement>('video')
+
+  if (!video) {
+    throw new Error('Video element not found')
+  }
+
+  //current rule to get the other documents that impact on the <video> size
+  const otherHeight = Number(video.style.height.split('px')[0]) - 2
+  const otherElements = document.querySelectorAll<HTMLElement>(
+    `[style*="height: ${otherHeight}px"]`
+  )
 
   otherElements.forEach((element) => {
     element.style.cssText = elementsFullStyle[element.id]
@@ -54,10 +64,3 @@ export function increaseVideoSize({
 
   video.style.cssText = videoFullStyle
 }
-
-// const { videoStyle, elementsStyle} = getfullScreamStyles()
-
-// console.log("videoStyle", videoStyle)
-// console.dir(elementsStyle)
-
-// increaseVideoSize(videoStyle, elementsStyle)
