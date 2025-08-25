@@ -2,19 +2,12 @@ import { Toaster, toast } from '@/components/chadcn/sonner'
 
 import { useState } from 'react'
 import { PulseLoader } from 'react-spinners'
+
 function App() {
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
-
-  function resetStates() {
-    setSuccess(null)
-    setError(null)
-  }
 
   async function getCaptionsTranscript(): Promise<void> {
     setIsLoading(true)
-    resetStates()
 
     const { error: captionsError } = await chrome.runtime.sendMessage({
       type: 'GET_CAPTIONS_TRANSCRIPT',
@@ -28,10 +21,13 @@ function App() {
   }
 
   async function getFullVideoScreen(): Promise<void> {
-    resetStates()
-    const { error } = await chrome.runtime.sendMessage({
+    const { error, success } = await chrome.runtime.sendMessage({
       type: 'APPLY_FULL_VIDEO_SCREEN',
     })
+
+    if (success) {
+      toast.success('Successfully applied full video styles!')
+    }
 
     if (error) {
       toast.error(`Error increasing video size: ${error}`)
@@ -39,7 +35,6 @@ function App() {
   }
 
   async function getFullVideoScreenStyles(): Promise<void> {
-    resetStates()
     const { error, success } = await chrome.runtime.sendMessage({
       type: 'GET_FULL_VIDEO_SCREEN_STYLES',
     })
@@ -81,11 +76,6 @@ function App() {
           >
             Apply Full Screen Video
           </button>
-        </div>
-
-        <div className="mt-2 flex items-center justify-center">
-          {error && <p className="text-red-500">{error}</p>}
-          {success && <p className="text-green-500">{success}</p>}
         </div>
       </div>
       <Toaster position="top-right" duration={2000} />
