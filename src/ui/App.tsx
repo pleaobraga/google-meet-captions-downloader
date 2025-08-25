@@ -1,5 +1,4 @@
-import { Toaster } from '@/components/chadcn/sonner'
-import { toast } from 'sonner'
+import { Toaster, toast } from '@/components/chadcn/sonner'
 
 import { useState } from 'react'
 import { PulseLoader } from 'react-spinners'
