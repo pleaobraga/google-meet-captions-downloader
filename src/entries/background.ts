@@ -120,6 +120,60 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
 
         break
       }
+
+      case 'HIDE_CAPTIONS': {
+        try {
+          await chrome.scripting.executeScript({
+            target: { tabId: currentWindowId! },
+            func: () => {
+              const captionsContainer = document.querySelector<HTMLElement>(
+                '[aria-label="Captions"]'
+              )
+
+              if (!captionsContainer) {
+                throw new Error('Captions container not found')
+              }
+
+              captionsContainer.style.opacity = '0'
+            },
+          })
+
+          sendResponse({ success: true })
+        } catch (error) {
+          const { errorMessage } = errorHandler(error)
+          sendResponse({ error: errorMessage })
+          console.error('Error hiding captions:', errorMessage)
+        }
+
+        break
+      }
+
+      case 'SHOW_CAPTIONS': {
+        try {
+          await chrome.scripting.executeScript({
+            target: { tabId: currentWindowId! },
+            func: () => {
+              const captionsContainer = document.querySelector<HTMLElement>(
+                '[aria-label="Captions"]'
+              )
+
+              if (!captionsContainer) {
+                throw new Error('Captions container not found')
+              }
+
+              captionsContainer.style.opacity = '100'
+            },
+          })
+
+          sendResponse({ success: true })
+        } catch (error) {
+          const { errorMessage } = errorHandler(error)
+          sendResponse({ error: errorMessage })
+          console.error('Error showing captions:', errorMessage)
+        }
+
+        break
+      }
     }
   })()
 

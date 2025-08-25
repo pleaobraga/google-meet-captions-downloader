@@ -5,6 +5,7 @@ import { PulseLoader } from 'react-spinners'
 
 function App() {
   const [isLoading, setIsLoading] = useState(false)
+  const [hideCaption, setHideCaption] = useState(false)
 
   async function getCaptionsTranscript(): Promise<void> {
     setIsLoading(true)
@@ -48,14 +49,44 @@ function App() {
     }
   }
 
+  async function hideCaptions(): Promise<void> {
+    const { error, success } = await chrome.runtime.sendMessage({
+      type: 'HIDE_CAPTIONS',
+    })
+
+    if (error) {
+      toast.error(`Error hiding captions: ${error}`)
+    }
+
+    if (success) {
+      setHideCaption(true)
+      toast.success('Successfully hid captions!')
+    }
+  }
+
+  async function showCaptions(): Promise<void> {
+    const { error, success } = await chrome.runtime.sendMessage({
+      type: 'SHOW_CAPTIONS',
+    })
+
+    if (error) {
+      toast.error(`Error showing captions: ${error}`)
+    }
+
+    if (success) {
+      setHideCaption(false)
+      toast.success('Successfully showed captions!')
+    }
+  }
+
   return (
     <>
       <div className="flex flex-col justify-center items-center gap-5 p-3">
         <h2 className="text-xl">Transcribing your Meeting</h2>
         <div className="flex flex-col gap-3">
-          <div>
+          <div className="flex gap-3">
             <button
-              className={`bg-blue-500 text-white py-2 px-2 rounded ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`w-full bg-blue-500 text-white py-2 px-2 rounded ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
               onClick={getCaptionsTranscript}
               disabled={isLoading}
             >
@@ -66,7 +97,7 @@ function App() {
               )}
             </button>
           </div>
-          <div>
+          <div className="flex gap-3">
             <button
               className={`bg-blue-500 text-white py-2 px-3 rounded`}
               onClick={getFullVideoScreenStyles}
@@ -79,6 +110,23 @@ function App() {
             >
               Apply Full Screen Video
             </button>
+          </div>
+          <div className="flex gap-3">
+            {hideCaption ? (
+              <button
+                className={`bg-blue-500 text-white py-2 px-3 rounded`}
+                onClick={showCaptions}
+              >
+                Show Caption
+              </button>
+            ) : (
+              <button
+                className={`bg-blue-500 text-white py-2 px-3 rounded`}
+                onClick={hideCaptions}
+              >
+                Hide Caption
+              </button>
+            )}
           </div>
         </div>
       </div>
