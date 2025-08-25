@@ -14,9 +14,13 @@ export function getHTMLElements() {
   return { video, otherElements }
 }
 
-export function getfullScreamStyles() {
-  const { video, otherElements } = getHTMLElements()
-
+export function getfullScreamStyles({
+  video,
+  otherElements,
+}: {
+  video: HTMLVideoElement
+  otherElements: NodeListOf<HTMLElement>
+}) {
   const videoStyle = video.style.cssText
 
   const elementsStyle: Record<string, string> = {}
