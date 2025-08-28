@@ -19,6 +19,13 @@ chrome.action.onClicked.addListener(async (tab) => {
   })
 })
 
+chrome.runtime.onConnect.addListener((port) => {
+  if (port.name === 'keepAlive') {
+    port.onMessage.addListener(() => {})
+    port.onDisconnect.addListener(() => {})
+  }
+})
+
 chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
   ;(async () => {
     if (!currentWindowId) return console.warn('No active window ID.')
