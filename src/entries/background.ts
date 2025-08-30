@@ -1,4 +1,8 @@
-import { downloadCaptions, extractCaptions } from '@/features/captions/captions'
+import {
+  downloadCaptions,
+  extractCaptions,
+  getPastTranscriptions,
+} from '@/features/captions/captions'
 import { increaseVideoSize } from '@/features/resize-video/resize-video'
 import { errorHandler } from '@/lib/utils'
 
@@ -27,7 +31,12 @@ chrome.runtime.onConnect.addListener((port) => {
 })
 
 chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
+  console.log('message', message)
   ;(async () => {
+    if (message.target !== 'background') {
+      return false
+    }
+
     if (!currentWindowId) return console.warn('No active window ID.')
 
     switch (message?.type) {
@@ -128,58 +137,15 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
         break
       }
 
-      case 'HIDE_CAPTIONS': {
-        try {
-          await chrome.scripting.executeScript({
-            target: { tabId: currentWindowId! },
-            func: () => {
-              const captionsContainer = document.querySelector<HTMLElement>(
-                '[aria-label="Captions"]'
-              )
-
-              if (!captionsContainer) {
-                throw new Error('Captions container not found')
-              }
-
-              captionsContainer.style.opacity = '0'
-            },
-          })
-
-          sendResponse({ success: true })
-        } catch (error) {
-          const { errorMessage } = errorHandler(error)
-          sendResponse({ error: errorMessage })
-          console.error('Error hiding captions:', errorMessage)
-        }
-
-        break
-      }
-
-      case 'SHOW_CAPTIONS': {
-        try {
-          await chrome.scripting.executeScript({
-            target: { tabId: currentWindowId! },
-            func: () => {
-              const captionsContainer = document.querySelector<HTMLElement>(
-                '[aria-label="Captions"]'
-              )
-
-              if (!captionsContainer) {
-                throw new Error('Captions container not found')
-              }
-
-              captionsContainer.style.opacity = '100'
-            },
-          })
-
-          sendResponse({ success: true })
-        } catch (error) {
-          const { errorMessage } = errorHandler(error)
-          sendResponse({ error: errorMessage })
-          console.error('Error showing captions:', errorMessage)
-        }
-
-        break
+      case 'GET_PAST_TRANSCRIPTIONS': {
+        const [{ result }] = await chrome.scripting.executeScript({
+          target: { tabId: currentWindowId },
+          func: getPastTranscriptions,
+        })
+        return sendResponse({
+          success: true,
+          pastTranscriptions: result,
+        })
       }
     }
   })()

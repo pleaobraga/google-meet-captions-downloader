@@ -59,3 +59,26 @@ export function downloadCaptions(formatted: string) {
     saveAs: true,
   })
 }
+
+export function getPastTranscriptions() {
+  const SAVED_ITEMS_PREFIX = 'captionText_'
+
+  console.log('Getting past transcriptions:')
+
+  const pastTranscriptions: { [key: string]: string } = {}
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)!
+
+    if (key.startsWith(SAVED_ITEMS_PREFIX)) {
+      const value = localStorage.getItem(key)!
+
+      if (value) {
+        pastTranscriptions[key] = value
+      }
+      console.log(key, value)
+    }
+  }
+
+  return pastTranscriptions
+}

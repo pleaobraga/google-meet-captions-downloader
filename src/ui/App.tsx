@@ -4,15 +4,7 @@ import { PulseLoader } from 'react-spinners'
 import { useApp } from './useApp'
 
 function App() {
-  const {
-    isLoading,
-    hideCaption,
-    getCaptionsTranscript,
-    getFullVideoScreen,
-    getFullVideoScreenStyles,
-    hideCaptions,
-    showCaptions,
-  } = useApp()
+  const { isLoading, getCaptionsTranscript } = useApp()
 
   return (
     <>
@@ -31,37 +23,6 @@ function App() {
                 'Get Transcription'
               )}
             </button>
-          </div>
-          <div className="flex gap-3">
-            <button
-              className={`bg-blue-500 text-white py-2 px-3 rounded`}
-              onClick={getFullVideoScreenStyles}
-            >
-              Get Full Screen Video Styles
-            </button>
-            <button
-              className={`bg-blue-500 text-white py-2 px-3 rounded`}
-              onClick={getFullVideoScreen}
-            >
-              Apply Full Screen Video
-            </button>
-          </div>
-          <div className="flex gap-3">
-            {hideCaption ? (
-              <button
-                className={`bg-blue-500 text-white py-2 px-3 rounded`}
-                onClick={showCaptions}
-              >
-                Show Caption
-              </button>
-            ) : (
-              <button
-                className={`bg-blue-500 text-white py-2 px-3 rounded`}
-                onClick={hideCaptions}
-              >
-                Hide Caption
-              </button>
-            )}
           </div>
         </div>
       </div>

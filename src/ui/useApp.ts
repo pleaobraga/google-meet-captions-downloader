@@ -3,11 +3,16 @@ import { useEffect, useState } from 'react'
 
 export function useApp() {
   const [isLoading, setIsLoading] = useState(false)
-  const [hideCaption, setHideCaption] = useState(false)
+  const [pastTranscriptions, setPastTranscriptions] = useState<Record<
+    string,
+    string
+  > | null>(null)
 
   useEffect(() => {
     const port = chrome.runtime.connect({ name: 'keepAlive' })
     setInterval(() => port.postMessage({ ping: Date.now() }), 20_000)
+
+    getPastTranscriptions()
   }, [])
 
   async function getCaptionsTranscript(): Promise<void> {
@@ -15,6 +20,7 @@ export function useApp() {
 
     const { error: captionsError } = await chrome.runtime.sendMessage({
       type: 'GET_CAPTIONS_TRANSCRIPT',
+      target: 'background',
     })
 
     if (captionsError) {
@@ -27,6 +33,7 @@ export function useApp() {
   async function getFullVideoScreen(): Promise<void> {
     const { error, success } = await chrome.runtime.sendMessage({
       type: 'APPLY_FULL_VIDEO_SCREEN',
+      target: 'background',
     })
 
     if (success) {
@@ -38,57 +45,26 @@ export function useApp() {
     }
   }
 
-  async function getFullVideoScreenStyles(): Promise<void> {
-    const { error, success } = await chrome.runtime.sendMessage({
-      type: 'GET_FULL_VIDEO_SCREEN_STYLES',
+  async function getPastTranscriptions(): Promise<void> {
+    const { error, pastTranscriptions } = await chrome.runtime.sendMessage({
+      type: 'GET_PAST_TRANSCRIPTIONS',
+      target: 'background',
     })
 
-    if (error) {
-      toast.error(`Error getting video size: ${error}`)
-    }
+    setPastTranscriptions(pastTranscriptions)
 
-    if (success) {
-      toast.success('Successfully got video styles!')
-    }
-  }
-
-  async function hideCaptions(): Promise<void> {
-    const { error, success } = await chrome.runtime.sendMessage({
-      type: 'HIDE_CAPTIONS',
-    })
+    console.log('pastTranscriptions', pastTranscriptions)
 
     if (error) {
-      toast.error(`Error hiding captions: ${error}`)
-    }
-
-    if (success) {
-      setHideCaption(true)
-      toast.success('Successfully hid captions!')
-    }
-  }
-
-  async function showCaptions(): Promise<void> {
-    const { error, success } = await chrome.runtime.sendMessage({
-      type: 'SHOW_CAPTIONS',
-    })
-
-    if (error) {
-      toast.error(`Error showing captions: ${error}`)
-    }
-
-    if (success) {
-      setHideCaption(false)
-      toast.success('Successfully showed captions!')
+      toast.error(`Error retrieving past transcriptions: ${error}`)
     }
   }
 
   return {
     isLoading,
-    hideCaption,
+    pastTranscriptions,
     getCaptionsTranscript,
     getFullVideoScreen,
-    getFullVideoScreenStyles,
-    hideCaptions,
-    showCaptions,
+    getPastTranscriptions,
   }
 }
