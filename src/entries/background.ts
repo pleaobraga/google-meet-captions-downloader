@@ -18,8 +18,8 @@ chrome.action.onClicked.addListener(async (tab) => {
   await chrome.windows.create({
     url: chrome.runtime.getURL('index.html'),
     type: 'popup',
-    width: 420,
-    height: 720,
+    width: 470,
+    height: 600,
   })
 })
 
