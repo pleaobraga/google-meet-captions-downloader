@@ -1,12 +1,5 @@
-export function extractCaptions() {
-  const captionsContainer = document.querySelector<HTMLElement>(
-    '[aria-label="Captions"]'
-  )
-
-  const raw = captionsContainer?.innerText || ''
-
-  // Normalize newlines
-  const text = raw.replace(/\r\n?/g, '\n').trim()
+export function formatCaptions(captions: string) {
+  const text = captions.replace(/\r\n?/g, '\n').trim()
 
   // A "speaker line" is a line that looks like a proper name (no trailing punctuation),
   // e.g., "You", "Pedro". Supports accents.
@@ -44,6 +37,14 @@ export function extractCaptions() {
 
   // Render `speaker: text` separated by blank lines
   return blocks.map((b) => `${b.speaker}: ${b.text}`).join('\n\n')
+}
+
+export function extractCaptions() {
+  const captionsContainer = document.querySelector<HTMLElement>(
+    '[aria-label="Captions"]'
+  )
+
+  return captionsContainer?.innerText || ''
 }
 
 function defaultName() {

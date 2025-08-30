@@ -1,6 +1,7 @@
 import {
   downloadCaptions,
   extractCaptions,
+  formatCaptions,
   getPastTranscriptions,
 } from '@/features/captions/captions'
 import { increaseVideoSize } from '@/features/resize-video/resize-video'
@@ -47,8 +48,10 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
             func: extractCaptions,
           })
 
-          const formatted = (result as string) || ''
-          if (!formatted) throw new Error('No captions found.')
+          const captions = (result as string) || ''
+          if (!captions) throw new Error('No captions found.')
+
+          const formatted = formatCaptions(captions)
 
           downloadCaptions(formatted)
 
