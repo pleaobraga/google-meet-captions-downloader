@@ -65,7 +65,9 @@ export function getPastTranscriptions() {
 
   console.log('Getting past transcriptions:')
 
-  const pastTranscriptions: { [key: string]: string } = {}
+  const pastTranscriptions: {
+    [key: string]: { text: string; timestamp: number; id: string }
+  } = {}
 
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i)!
@@ -74,7 +76,11 @@ export function getPastTranscriptions() {
       const value = localStorage.getItem(key)!
 
       if (value) {
-        pastTranscriptions[key] = value
+        pastTranscriptions[key] = {
+          text: value,
+          timestamp: Number(key.split('_')[1]),
+          id: key,
+        }
       }
       console.log(key, value)
     }

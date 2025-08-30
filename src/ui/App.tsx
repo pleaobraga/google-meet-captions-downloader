@@ -1,10 +1,11 @@
 import { Toaster } from '@/components/chadcn/sonner'
 
+import { CaptionsList } from '@/components/captions-list'
 import { PulseLoader } from 'react-spinners'
 import { useApp } from './useApp'
 
 function App() {
-  const { isLoading, getCaptionsTranscript } = useApp()
+  const { isLoading, getCaptionsTranscript, pastTranscriptions } = useApp()
 
   return (
     <>
@@ -23,6 +24,9 @@ function App() {
                 'Get Transcription'
               )}
             </button>
+          </div>
+          <div>
+            <CaptionsList pastTranscriptions={pastTranscriptions} />
           </div>
         </div>
       </div>
