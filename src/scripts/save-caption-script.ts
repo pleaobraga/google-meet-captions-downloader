@@ -6,8 +6,6 @@ const body = document.querySelector('body')
 
 const currentStorageItem = `captionText_${Date.now()}`
 
-console.log('currentStorageItem', currentStorageItem)
-
 const observerCaptions = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
     if (captionText && mutation.type === 'characterData') {

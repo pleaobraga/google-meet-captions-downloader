@@ -6,16 +6,16 @@
 
   "action": {},
 
+  "permissions": ["downloads", "scripting", "activeTab", "windows"],
+
   "background": {
     "service_worker": "background.js",
     "type": "module"
   },
 
-  "permissions": ["downloads", "scripting", "activeTab", "windows"],
-
   "content_scripts": [
     {
-      "js": ["content.js"],
+      "js": ["save-caption-script.js"],
       "matches": ["https://meet.google.com/*"]
     }
   ],
