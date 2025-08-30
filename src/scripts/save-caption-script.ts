@@ -1,4 +1,5 @@
 let hasCaptionObserver = false
+let setToogleCaptionOff = false
 
 let captionText: HTMLDivElement | null = null
 
@@ -22,9 +23,21 @@ const observerBody = new MutationObserver(() => {
     '[aria-label="Captions"]'
   )
 
+  const captionOffToggle = document.querySelector<HTMLButtonElement>(
+    '[aria-label="Turn off captions"]'
+  )
+
   if (captionToogle) {
     // open captions
     captionToogle.click()
+  }
+
+  if (captionOffToggle && !setToogleCaptionOff) {
+    setToogleCaptionOff = true
+    captionOffToggle.addEventListener('click', (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+    })
   }
 
   if (captionText && !hasCaptionObserver) {

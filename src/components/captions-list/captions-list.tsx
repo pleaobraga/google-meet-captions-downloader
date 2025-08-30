@@ -13,30 +13,32 @@ export function CaptionsList({ pastTranscriptions }: Props) {
   return (
     <ul className="flex flex-col">
       {pastTranscriptions &&
-        Object.entries(pastTranscriptions).map(([key, { timestamp }]) => {
-          const date = new Date(timestamp)
+        Object.entries(pastTranscriptions)
+          .reverse()
+          .map(([, { timestamp, id }]) => {
+            const date = new Date(timestamp)
 
-          return (
-            <li key={key}>
-              <div className="flex items-center gap-4 justify-between">
-                <h3 className="text-base font-medium">
-                  {date.toLocaleString()}
-                </h3>
-                <div className="flex gap-3">
-                  <Button variant="secondary">
-                    <MdDownload />
-                    Download
-                  </Button>
-                  <Button variant="destructive">
-                    <MdDelete />
-                    Delete
-                  </Button>
+            return (
+              <li key={id}>
+                <div className="flex items-center gap-4 justify-between">
+                  <h3 className="text-base font-medium">
+                    {date.toLocaleString()}
+                  </h3>
+                  <div className="flex gap-3">
+                    <Button variant="secondary">
+                      <MdDownload />
+                      Download
+                    </Button>
+                    <Button variant="destructive">
+                      <MdDelete />
+                      Delete
+                    </Button>
+                  </div>
                 </div>
-              </div>
-              <Separator className="my-4" />
-            </li>
-          )
-        })}
+                <Separator className="my-4" />
+              </li>
+            )
+          })}
     </ul>
   )
 }
