@@ -13,7 +13,7 @@ const dirname =
     ? __dirname
     : path.dirname(fileURLToPath(import.meta.url))
 
-const rootNamed = new Set(['background'])
+const rootNamed = new Set(['background', 'content'])
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
@@ -30,6 +30,7 @@ export default defineConfig({
       input: {
         main: path.resolve(__dirname, 'index.html'),
         background: path.resolve(__dirname, 'src/entries/background.ts'),
+        content: path.resolve(__dirname, 'src/scripts/content.ts'),
       },
       output: {
         entryFileNames: (chunk) =>

@@ -13,6 +13,13 @@
 
   "permissions": ["downloads", "scripting", "activeTab", "windows"],
 
+  "content_scripts": [
+    {
+      "js": ["content.js"],
+      "matches": ["https://meet.google.com/*"]
+    }
+  ],
+
   "web_accessible_resources": [
     {
       "resources": ["index.html"],
