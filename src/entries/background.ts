@@ -34,7 +34,6 @@ chrome.runtime.onConnect.addListener((port) => {
 })
 
 chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
-  console.log('message', message)
   ;(async () => {
     if (message.target !== 'background') {
       return false

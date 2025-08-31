@@ -61,8 +61,6 @@ export function downloadCaptions(formatted: string, filename?: string) {
 
   const downloadFileName = filename ?? transcriptNameByDate()
 
-  console.log('Downloading captions as:', downloadFileName)
-
   chrome.downloads.download({
     url: dataUrl,
     filename: downloadFileName,
