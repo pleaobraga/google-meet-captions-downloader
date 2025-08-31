@@ -7,7 +7,8 @@ import { PulseLoader } from 'react-spinners'
 import { useApp } from './useApp'
 
 function App() {
-  const { isLoading, getCaptionsTranscript, pastTranscriptions } = useApp()
+  const { isLoading, getCurrentCaptionsTranscript, pastTranscriptions } =
+    useApp()
 
   return (
     <>
@@ -21,7 +22,7 @@ function App() {
         <footer className="flex gap-3 fixed bottom-0 left-0 right-0 p-3 dark:bg-black border-t dark:border-gray-800">
           <Button
             className={`w-full ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            onClick={getCaptionsTranscript}
+            onClick={getCurrentCaptionsTranscript}
             disabled={isLoading}
           >
             {isLoading ? (

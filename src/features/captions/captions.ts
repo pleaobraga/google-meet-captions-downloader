@@ -1,3 +1,5 @@
+import { formatDateToFilename } from '@/lib/utils'
+
 export function formatCaptions(captions: string) {
   const text = captions.replace(/\r\n?/g, '\n').trim()
 
@@ -47,16 +49,23 @@ export function extractCaptions() {
   return captionsContainer?.innerText || ''
 }
 
-function defaultName() {
-  return `formatted-transcript-${new Date().toISOString().replace(/[:.]/g, '-')}.txt`
+export function transcriptNameByDate(date?: Date) {
+  const formattedDate = formatDateToFilename(date)
+
+  return `formatted-transcript-${formattedDate}.txt`
 }
 
-export function downloadCaptions(formatted: string) {
+export function downloadCaptions(formatted: string, filename?: string) {
   const dataUrl =
     'data:text/plain;charset=utf-8,' + encodeURIComponent(formatted)
+
+  const downloadFileName = filename ?? transcriptNameByDate()
+
+  console.log('Downloading captions as:', downloadFileName)
+
   chrome.downloads.download({
     url: dataUrl,
-    filename: defaultName(),
+    filename: downloadFileName,
     saveAs: true,
   })
 }

@@ -1,7 +1,4 @@
-import { MdDelete, MdDownload } from 'react-icons/md'
-
-import { Button } from '../chadcn/button'
-import { Separator } from '../chadcn/separator'
+import { CaptionListItem } from './components/caption-list-item'
 
 type Props = {
   pastTranscriptions: {
@@ -18,26 +15,7 @@ export function CaptionsList({ pastTranscriptions }: Props) {
           .map(([, { timestamp, id }]) => {
             const date = new Date(timestamp)
 
-            return (
-              <li key={id}>
-                <div className="flex items-center gap-4 justify-between">
-                  <h3 className="text-base font-medium">
-                    {date.toLocaleString()}
-                  </h3>
-                  <div className="flex gap-3">
-                    <Button variant="secondary">
-                      <MdDownload />
-                      Download
-                    </Button>
-                    <Button variant="destructive">
-                      <MdDelete />
-                      Delete
-                    </Button>
-                  </div>
-                </div>
-                <Separator className="my-4" />
-              </li>
-            )
+            return <CaptionListItem key={id} date={date} id={id} />
           })}
     </ul>
   )

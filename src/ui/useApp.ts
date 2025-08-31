@@ -15,11 +15,11 @@ export function useApp() {
     getPastTranscriptions()
   }, [])
 
-  async function getCaptionsTranscript(): Promise<void> {
+  async function getCurrentCaptionsTranscript(): Promise<void> {
     setIsLoading(true)
 
     const { error: captionsError } = await chrome.runtime.sendMessage({
-      type: 'GET_CAPTIONS_TRANSCRIPT',
+      type: 'GET_CURRENT_CAPTIONS_TRANSCRIPT',
       target: 'background',
     })
 
@@ -63,7 +63,7 @@ export function useApp() {
   return {
     isLoading,
     pastTranscriptions,
-    getCaptionsTranscript,
+    getCurrentCaptionsTranscript,
     getFullVideoScreen,
     getPastTranscriptions,
   }

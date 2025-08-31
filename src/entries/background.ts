@@ -3,6 +3,7 @@ import {
   extractCaptions,
   formatCaptions,
   getPastTranscriptions,
+  transcriptNameByDate,
 } from '@/features/captions/captions'
 import { increaseVideoSize } from '@/features/resize-video/resize-video'
 import { errorHandler } from '@/lib/utils'
@@ -41,7 +42,7 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
     if (!currentWindowId) return console.warn('No active window ID.')
 
     switch (message?.type) {
-      case 'GET_CAPTIONS_TRANSCRIPT': {
+      case 'GET_CURRENT_CAPTIONS_TRANSCRIPT': {
         try {
           const [{ result }] = await chrome.scripting.executeScript({
             target: { tabId: currentWindowId },
@@ -54,6 +55,34 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           const formatted = formatCaptions(captions)
 
           downloadCaptions(formatted)
+
+          sendResponse({ success: true })
+        } catch (error) {
+          const { errorMessage } = errorHandler(error)
+          sendResponse({ error: errorMessage })
+          console.error('Error extracting captions:', errorMessage)
+        }
+
+        break
+      }
+
+      case 'GET_CAPTION_TRANSCRIPT': {
+        try {
+          if (!message.payload.id) throw new Error('No caption ID provided.')
+
+          const [{ result }] = await chrome.scripting.executeScript({
+            target: { tabId: currentWindowId },
+            func: extractCaptions,
+          })
+
+          const captions = (result as string) || ''
+          if (!captions) throw new Error('No captions found.')
+
+          const formatted = formatCaptions(captions)
+
+          const filename = transcriptNameByDate(message.payload.date)
+
+          downloadCaptions(formatted, filename)
 
           sendResponse({ success: true })
         } catch (error) {
