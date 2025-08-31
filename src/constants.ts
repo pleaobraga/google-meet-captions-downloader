@@ -4,3 +4,5 @@ export const WIDTH_PADDING = 32
 
 export const MAX_VIDEO_HEIGHT = window.innerHeight - HEIGHT_AROUND_VIDEO
 export const MAX_VIDEO_WIDTH = MAX_VIDEO_HEIGHT * PORPORTION_WIDTH_RATE
+
+export const SAVED_ITEMS_PREFIX = 'captionText_'

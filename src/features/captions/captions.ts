@@ -68,9 +68,7 @@ export function downloadCaptions(formatted: string, filename?: string) {
   })
 }
 
-export function getPastTranscriptions() {
-  const SAVED_ITEMS_PREFIX = 'captionText_'
-
+export function getPastTranscriptions(savedItemsPrefix: string) {
   const pastTranscriptions: {
     [key: string]: { text: string; timestamp: number; id: string }
   } = {}
@@ -78,7 +76,7 @@ export function getPastTranscriptions() {
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i)
 
-    if (key?.startsWith(SAVED_ITEMS_PREFIX)) {
+    if (key?.startsWith(savedItemsPrefix)) {
       const value = localStorage.getItem(key)!
 
       if (value) {

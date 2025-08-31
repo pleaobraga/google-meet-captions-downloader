@@ -1,3 +1,5 @@
+const SAVED_ITEMS_PREFIX = 'captionText_'
+
 let hasCaptionObserver = false
 let setToogleCaptionOff = false
 
@@ -5,7 +7,7 @@ let captionText: HTMLDivElement | null = null
 
 const body = document.querySelector('body')
 
-const currentStorageItem = `captionText_${Date.now()}`
+const currentStorageItem = `${SAVED_ITEMS_PREFIX}${Date.now()}`
 
 const observerCaptions = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
