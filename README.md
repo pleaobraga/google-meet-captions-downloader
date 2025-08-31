@@ -4,8 +4,11 @@ A Chrome extension that allows you to download transcripts from Google Meet sess
 
 ## 🚀 Features
 
-- Download Google Meet captions in real-time
-- Save transcripts as text files
+- Automatically enables captions when you join a meeting
+- Prevents the captions button from being toggled off accidentally
+- Saves meeting transcriptions in local storage for later access
+- Download transcripts in real-time as text files
+- Manage saved meetings: download or delete previous transcripts anytime
 - Easy-to-use popup interface
 - Works with any Google Meet session
 
@@ -26,14 +29,14 @@ A Chrome extension that allows you to download transcripts from Google Meet sess
 Follow these steps to use the extension:
 
 1. Join any Google Meet session through your web browser
-2. Click on the "Turn on captions" button (CC icon) in Google Meet to activate closed captions
-3. When you want to save the transcription:
+2. The extension will automatically turn on captions (CC icon) when you enter the meeting room
+   - The CC button will be disabled to prevent captions from being turned off accidentally
+3. To save or manage transcripts:
    - Click on the extension icon in your browser toolbar
-   - Click the "Get Transcription" button in the popup
-4. Choose where you want to save the transcription file when the download dialog appears
-5. Open the downloaded file to view your meeting's transcription
+   - You can download the current meeting’s transcript, or view/download/delete previous saved ones
+4. Saved transcripts are stored in local storage until you delete them
 
-> **Note:** Captions must be turned on in Google Meet for the extension to work properly.
+> **Note:** Captions must be available in Google Meet for the extension to work properly.
 
 ## 📥 Installation
 
@@ -78,13 +81,6 @@ pnpm build
 
 3. Go to `chrome://extensions/`
 4. Click the refresh icon on your extension's card
-
-## 💡 Usage
-
-1. Join a Google Meet session
-2. Click the extension icon in your browser toolbar
-3. When captions are available, click "Download Transcript"
-4. The transcript will be saved to your downloads folder
 
 ## 👤 Author
 
