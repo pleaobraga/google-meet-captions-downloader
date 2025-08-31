@@ -6,9 +6,10 @@ import { useCaptionItem } from './use-caption-item'
 type Props = {
   date: Date
   id: string
+  text: string
 }
 
-export function CaptionListItem({ date, id }: Props) {
+export function CaptionListItem({ date, text }: Props) {
   const { downloadTranscript } = useCaptionItem()
 
   return (
@@ -18,7 +19,7 @@ export function CaptionListItem({ date, id }: Props) {
         <div className="flex gap-3">
           <Button
             variant="secondary"
-            onClick={() => downloadTranscript({ id, date })}
+            onClick={() => downloadTranscript({ date, text })}
           >
             <MdDownload />
             Download

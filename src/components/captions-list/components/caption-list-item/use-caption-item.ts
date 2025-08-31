@@ -5,16 +5,16 @@ export function useCaptionItem() {
   const [isDownloading, setIsDownloading] = useState(false)
 
   async function getCaptionTranscript({
-    id,
     date,
+    text,
   }: {
-    id: string
     date: Date
+    text: string
   }): Promise<void> {
     const { error: captionsError } = await chrome.runtime.sendMessage({
       type: 'GET_CAPTION_TRANSCRIPT',
       target: 'background',
-      payload: { id, date },
+      payload: { date, text },
     })
 
     if (captionsError) {
@@ -23,14 +23,14 @@ export function useCaptionItem() {
   }
 
   const downloadTranscript = async ({
-    id,
     date,
+    text,
   }: {
-    id: string
     date: Date
+    text: string
   }) => {
     setIsDownloading(true)
-    await getCaptionTranscript({ id, date })
+    await getCaptionTranscript({ date, text })
     setIsDownloading(false)
   }
 

@@ -12,10 +12,10 @@ export function CaptionsList({ pastTranscriptions }: Props) {
       {pastTranscriptions &&
         Object.entries(pastTranscriptions)
           .reverse()
-          .map(([, { timestamp, id }]) => {
+          .map(([, { timestamp, id, text }]) => {
             const date = new Date(timestamp)
 
-            return <CaptionListItem key={id} date={date} id={id} />
+            return <CaptionListItem key={id} date={date} id={id} text={text} />
           })}
     </ul>
   )

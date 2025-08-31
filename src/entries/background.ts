@@ -68,17 +68,10 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
 
       case 'GET_CAPTION_TRANSCRIPT': {
         try {
-          if (!message.payload.id) throw new Error('No caption ID provided.')
+          if (!message.payload.text)
+            throw new Error('No caption text provided.')
 
-          const [{ result }] = await chrome.scripting.executeScript({
-            target: { tabId: currentWindowId },
-            func: extractCaptions,
-          })
-
-          const captions = (result as string) || ''
-          if (!captions) throw new Error('No captions found.')
-
-          const formatted = formatCaptions(captions)
+          const formatted = formatCaptions(message.payload.text)
 
           const filename = transcriptNameByDate(message.payload.date)
 
