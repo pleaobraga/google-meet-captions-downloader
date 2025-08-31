@@ -7,8 +7,12 @@ import { PulseLoader } from 'react-spinners'
 import { useApp } from './useApp'
 
 function App() {
-  const { isLoading, getCurrentCaptionsTranscript, pastTranscriptions } =
-    useApp()
+  const {
+    isLoading,
+    getCurrentCaptionsTranscript,
+    pastTranscriptions,
+    getPastTranscriptions,
+  } = useApp()
 
   return (
     <>
@@ -17,7 +21,10 @@ function App() {
           <h1 className="text-2xl font-semibold">Past Transcriptions</h1>
         </div>
         <div className="mt-16 mb-8  w-full">
-          <CaptionsList pastTranscriptions={pastTranscriptions} />
+          <CaptionsList
+            pastTranscriptions={pastTranscriptions}
+            onDelete={getPastTranscriptions}
+          />
         </div>
         <footer className="flex gap-3 fixed bottom-0 left-0 right-0 p-3 dark:bg-black border-t dark:border-gray-800">
           <Button

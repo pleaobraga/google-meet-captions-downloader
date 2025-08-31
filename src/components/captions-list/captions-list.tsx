@@ -4,9 +4,10 @@ type Props = {
   pastTranscriptions: {
     [key: string]: { text: string; timestamp: number; id: string }
   } | null
+  onDelete: (id: string) => void
 }
 
-export function CaptionsList({ pastTranscriptions }: Props) {
+export function CaptionsList({ pastTranscriptions, onDelete }: Props) {
   return (
     <ul className="flex flex-col">
       {pastTranscriptions &&
@@ -15,7 +16,15 @@ export function CaptionsList({ pastTranscriptions }: Props) {
           .map(([, { timestamp, id, text }]) => {
             const date = new Date(timestamp)
 
-            return <CaptionListItem key={id} date={date} id={id} text={text} />
+            return (
+              <CaptionListItem
+                key={id}
+                date={date}
+                id={id}
+                text={text}
+                onDelete={onDelete}
+              />
+            )
           })}
     </ul>
   )

@@ -95,3 +95,7 @@ export function getPastTranscriptions() {
 
   return pastTranscriptions
 }
+
+export function deletePastTranscriptions(id: string) {
+  localStorage.removeItem(id)
+}

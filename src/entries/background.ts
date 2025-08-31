@@ -1,4 +1,5 @@
 import {
+  deletePastTranscriptions,
   downloadCaptions,
   extractCaptions,
   formatCaptions,
@@ -171,6 +172,26 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           success: true,
           pastTranscriptions: result,
         })
+      }
+
+      case 'DELETE_PAST_TRANSCRIPT': {
+        try {
+          if (!message.payload.id) throw new Error('No caption ID provided.')
+
+          await chrome.scripting.executeScript({
+            target: { tabId: currentWindowId },
+            func: deletePastTranscriptions,
+            args: [message.payload.id],
+          })
+
+          sendResponse({ success: true })
+        } catch (error) {
+          const { errorMessage } = errorHandler(error)
+          sendResponse({ error: errorMessage })
+          console.error('Error extracting captions:', errorMessage)
+        }
+
+        break
       }
     }
   })()

@@ -7,10 +7,21 @@ type Props = {
   date: Date
   id: string
   text: string
+  onDelete: (id: string) => void
 }
 
-export function CaptionListItem({ date, text }: Props) {
-  const { downloadTranscript } = useCaptionItem()
+export function CaptionListItem({ date, text, id, onDelete }: Props) {
+  const { downloadTranscript, deleteTranscript, isDeleting, isDownloading } =
+    useCaptionItem()
+
+  const handleDelete = async () => {
+    try {
+      await deleteTranscript({ id })
+      onDelete(id)
+    } catch (error) {
+      console.error('Error deleting transcript:', error)
+    }
+  }
 
   return (
     <li>
@@ -19,12 +30,17 @@ export function CaptionListItem({ date, text }: Props) {
         <div className="flex gap-3">
           <Button
             variant="secondary"
+            disabled={isDownloading}
             onClick={() => downloadTranscript({ date, text })}
           >
             <MdDownload />
             Download
           </Button>
-          <Button variant="destructive">
+          <Button
+            variant="destructive"
+            disabled={isDeleting}
+            onClick={handleDelete}
+          >
             <MdDelete />
             Delete
           </Button>

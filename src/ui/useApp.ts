@@ -53,8 +53,6 @@ export function useApp() {
 
     setPastTranscriptions(pastTranscriptions)
 
-    console.log('pastTranscriptions', pastTranscriptions)
-
     if (error) {
       toast.error(`Error retrieving past transcriptions: ${error}`)
     }
