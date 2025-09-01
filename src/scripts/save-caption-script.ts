@@ -4,6 +4,7 @@ let hasCaptionObserver = false
 let setToogleCaptionOff = false
 
 let captionText: HTMLDivElement | null = null
+let meetingTitle: string = ''
 
 const body = document.querySelector('body')
 
@@ -36,6 +37,10 @@ const observerBody = new MutationObserver(() => {
 
   if (captionOffToggle && !setToogleCaptionOff) {
     setToogleCaptionOff = true
+    meetingTitle = getMeetingTitle()
+
+    console.log('Meeting title:', meetingTitle)
+
     captionOffToggle.addEventListener('click', (e) => {
       e.preventDefault()
       e.stopPropagation()
@@ -44,6 +49,7 @@ const observerBody = new MutationObserver(() => {
 
   if (captionText && !hasCaptionObserver) {
     hasCaptionObserver = true
+
     observerCaptions.observe(captionText, {
       childList: true,
       subtree: true,
@@ -61,5 +67,22 @@ if (body) {
 }
 
 function saveCaptionText(captionText: string) {
-  localStorage.setItem(currentStorageItem, captionText)
+  const itemData = JSON.stringify({
+    text: captionText,
+    title: meetingTitle,
+  })
+
+  localStorage.setItem(currentStorageItem, itemData)
+}
+
+function getMeetingTitle(): string {
+  const meetingTitle = document.querySelector<HTMLDivElement>(
+    '[data-meeting-title]'
+  )?.innerText
+
+  if (meetingTitle) {
+    return meetingTitle.split(`\n`)[0]
+  }
+
+  return ''
 }

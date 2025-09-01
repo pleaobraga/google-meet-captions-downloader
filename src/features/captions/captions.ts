@@ -70,19 +70,25 @@ export function downloadCaptions(formatted: string, filename?: string) {
 
 export function getPastTranscriptions(savedItemsPrefix: string) {
   const pastTranscriptions: {
-    [key: string]: { text: string; timestamp: number; id: string }
+    [key: string]: {
+      text: string
+      timestamp: number
+      id: string
+      title: string
+    }
   } = {}
 
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i)
 
     if (key?.startsWith(savedItemsPrefix)) {
-      const value = localStorage.getItem(key)!
+      const value = JSON.parse(localStorage.getItem(key)!)
 
       if (value) {
         pastTranscriptions[key] = {
-          text: value,
+          text: value.text,
           timestamp: Number(key.split('_')[1]),
+          title: value.title,
           id: key,
         }
       }
