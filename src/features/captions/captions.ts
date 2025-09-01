@@ -1,6 +1,14 @@
 import { formatDateToFilename } from '@/lib/utils'
 
-export function formatCaptions(captions: string) {
+export function formatCaptions({
+  captions,
+  date,
+  meetingTitle,
+}: {
+  captions: string
+  date?: Date
+  meetingTitle?: string
+}) {
   const text = captions.replace(/\r\n?/g, '\n').trim()
 
   // A "speaker line" is a line that looks like a proper name (no trailing punctuation),
@@ -38,7 +46,17 @@ export function formatCaptions(captions: string) {
   flush()
 
   // Render `speaker: text` separated by blank lines
-  return blocks.map((b) => `${b.speaker}: ${b.text}`).join('\n\n')
+  const formattedTranscript = blocks
+    .map((b) => `${b.speaker}: ${b.text}`)
+    .join('\n\n')
+
+  const meetingDate = date
+    ? new Date(date).toLocaleString()
+    : 'no date provided'
+
+  const header = `Meeting: ${meetingTitle ?? 'No Meeting title provided'}\nDate: ${meetingDate}\n\n`
+
+  return header + formattedTranscript
 }
 
 export function extractCaptions() {

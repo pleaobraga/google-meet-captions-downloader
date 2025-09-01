@@ -36,7 +36,7 @@ export function CaptionListItem({ date, text, id, onDelete, title }: Props) {
             variant="secondary"
             size="icon"
             disabled={isDownloading}
-            onClick={() => downloadTranscript({ date, text })}
+            onClick={() => downloadTranscript({ date, text, title })}
           >
             <MdDownload />
           </Button>

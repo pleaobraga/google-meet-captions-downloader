@@ -53,7 +53,11 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           const captions = (result as string) || ''
           if (!captions) throw new Error('No captions found.')
 
-          const formatted = formatCaptions(captions)
+          const formatted = formatCaptions({
+            captions,
+            date: new Date(),
+            meetingTitle: 'Current Meeting',
+          })
 
           downloadCaptions(formatted)
 
@@ -72,7 +76,11 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           if (!message.payload.text)
             throw new Error('No caption text provided.')
 
-          const formatted = formatCaptions(message.payload.text)
+          const formatted = formatCaptions({
+            captions: message.payload.text,
+            date: message.payload.date,
+            meetingTitle: message.payload.title,
+          })
 
           const filename = transcriptNameByDate(message.payload.date)
 
