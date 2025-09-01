@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { CaptionListItem } from '.'
 
 const meta = {
-  title: 'Components/Caption List Item',
+  title: 'Components/Caption List/Caption List Item',
   component: CaptionListItem,
   parameters: {
     layout: 'centered',

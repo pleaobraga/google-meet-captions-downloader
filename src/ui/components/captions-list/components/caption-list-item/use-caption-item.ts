@@ -1,4 +1,4 @@
-import { toast } from '@/components/chadcn/sonner'
+import { toast } from '@/ui/components/chadcn/sonner'
 import { useState } from 'react'
 
 export function useCaptionItem() {

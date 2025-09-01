@@ -1,10 +1,10 @@
-import { Toaster } from '@/components/chadcn/sonner'
 
-import { CaptionsList } from '@/components/captions-list'
-import { Button } from '@/components/chadcn/button'
 import { MdDownload } from 'react-icons/md'
 import { PulseLoader } from 'react-spinners'
 import { useApp } from './useApp'
+import { CaptionsList } from './components/captions-list'
+import { Button } from './components/chadcn/button'
+import { Toaster } from 'sonner'
 
 function App() {
   const {
