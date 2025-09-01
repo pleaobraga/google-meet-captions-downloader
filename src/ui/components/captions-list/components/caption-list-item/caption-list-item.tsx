@@ -1,6 +1,6 @@
+import { Button } from '@/ui/components/chadcn/button'
 import { MdDelete, MdDownload } from 'react-icons/md'
 import { useCaptionItem } from './use-caption-item'
-import { Button } from '@/ui/components/chadcn/button'
 
 type Props = {
   date: Date
@@ -32,7 +32,7 @@ export function CaptionListItem({ date, text, id, onDelete, title }: Props) {
         </div>
         <div className="flex gap-3">
           <Button
-            title="Download this transcript"
+            title="Download Transcription"
             variant="secondary"
             size="icon"
             disabled={isDownloading}
@@ -41,7 +41,7 @@ export function CaptionListItem({ date, text, id, onDelete, title }: Props) {
             <MdDownload />
           </Button>
           <Button
-            title="Delete this transcript"
+            title="Delete Transcription"
             variant="destructive"
             size="icon"
             disabled={isDeleting}

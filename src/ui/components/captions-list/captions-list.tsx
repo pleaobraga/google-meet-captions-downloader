@@ -13,8 +13,8 @@ type Props = {
 }
 
 export function CaptionsList({ pastTranscriptions, onDelete }: Props) {
-  if (!pastTranscriptions) {
-    return <p>No captions available</p>
+  if (!pastTranscriptions || Object.keys(pastTranscriptions).length === 0) {
+    return <p>No previous captions available</p>
   }
 
   return (

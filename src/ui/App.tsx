@@ -1,10 +1,9 @@
-
 import { MdDownload } from 'react-icons/md'
 import { PulseLoader } from 'react-spinners'
-import { useApp } from './useApp'
+import { Toaster } from 'sonner'
 import { CaptionsList } from './components/captions-list'
 import { Button } from './components/chadcn/button'
-import { Toaster } from 'sonner'
+import { useApp } from './useApp'
 
 function App() {
   const {
@@ -36,7 +35,7 @@ function App() {
               <PulseLoader color="white" size={12} />
             ) : (
               <div className="flex items-center gap-2">
-                <MdDownload /> Download current Transcription
+                <MdDownload /> Download Current Transcription
               </div>
             )}
           </Button>

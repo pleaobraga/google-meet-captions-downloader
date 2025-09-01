@@ -1,5 +1,5 @@
-import { toast } from '@/components/chadcn/sonner'
 import { useEffect, useState } from 'react'
+import { toast } from './components/chadcn/sonner'
 
 export function useApp() {
   const [isLoading, setIsLoading] = useState(false)
