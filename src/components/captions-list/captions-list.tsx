@@ -13,6 +13,10 @@ type Props = {
 }
 
 export function CaptionsList({ pastTranscriptions, onDelete }: Props) {
+  if (!pastTranscriptions) {
+    return <p>No captions available</p>
+  }
+
   return (
     <ul className="flex flex-col gap-4">
       {pastTranscriptions &&
