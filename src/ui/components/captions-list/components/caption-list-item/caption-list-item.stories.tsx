@@ -1,5 +1,5 @@
 /* eslint-disable storybook/no-renderer-packages */
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { CaptionListItem } from '.'
 
@@ -21,6 +21,10 @@ export const Default: Story = {
     id: '123',
     text: 'Sample Caption',
     title: 'Sample Title',
+    history: [
+      { text: 'Initial caption text', time: '5 minutes' },
+      { text: 'Updated caption text', time: '10 minutes' },
+    ],
     onDelete: (id: string) => console.log(`Delete ${id}`),
   },
 }

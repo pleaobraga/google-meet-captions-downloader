@@ -7,6 +7,7 @@ type Props = {
       timestamp: number
       id: string
       title: string
+      history: Array<{ text: string; time: string }>
     }
   } | null
   onDelete: (id: string) => void
@@ -22,7 +23,7 @@ export function CaptionsList({ pastTranscriptions, onDelete }: Props) {
       {pastTranscriptions &&
         Object.entries(pastTranscriptions)
           .reverse()
-          .map(([, { timestamp, id, text, title }]) => {
+          .map(([, { timestamp, id, text, title, history }]) => {
             const date = new Date(timestamp)
 
             return (
@@ -32,6 +33,7 @@ export function CaptionsList({ pastTranscriptions, onDelete }: Props) {
                 id={id}
                 text={text}
                 title={title}
+                history={history}
                 onDelete={onDelete}
               />
             )

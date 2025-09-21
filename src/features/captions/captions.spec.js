@@ -135,6 +135,7 @@ describe('getPastTranscriptions', () => {
       timestamp: 1693410000000,
       title: 'One',
       id: `${prefix}1693410000000`,
+      history: [],
     })
     expect(result[`${prefix}1693420000000`].text).toBe('B')
   })

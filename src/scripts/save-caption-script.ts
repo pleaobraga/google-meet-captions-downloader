@@ -1,4 +1,5 @@
 const SAVED_ITEMS_PREFIX = 'captionText_'
+const HISTORY_SAVED_ITEMS_PREFIX = 'history_captionText_'
 
 let hasCaptionObserver = false
 let setToogleCaptionOff = false
@@ -8,7 +9,10 @@ let meetingTitle: string = ''
 
 const body = document.querySelector('body')
 
-const currentStorageItem = `${SAVED_ITEMS_PREFIX}${Date.now()}`
+const startedMeetingDate = new Date()
+
+const currentStorageItem = `${SAVED_ITEMS_PREFIX}${startedMeetingDate.getTime()}`
+const currentStorageItemHistory = `${HISTORY_SAVED_ITEMS_PREFIX}${startedMeetingDate.getTime()}`
 
 const observerCaptions = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
@@ -38,17 +42,11 @@ const observerBody = new MutationObserver(() => {
   if (captionOffToggle && !setToogleCaptionOff) {
     setToogleCaptionOff = true
     meetingTitle = getMeetingTitle()
-
-    console.log('Meeting title:', meetingTitle)
-
-    captionOffToggle.addEventListener('click', (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-    })
   }
 
   if (captionText && !hasCaptionObserver) {
     hasCaptionObserver = true
+    meetingTitle = getMeetingTitle()
 
     observerCaptions.observe(captionText, {
       childList: true,
@@ -64,6 +62,8 @@ if (body) {
     subtree: true,
     characterData: true,
   })
+  localStorage.setItem(currentStorageItemHistory, '[]')
+  saveCloseCaptionAfterMinutes()
 }
 
 function saveCaptionText(captionText: string) {
@@ -86,3 +86,62 @@ function getMeetingTitle(): string {
 
   return ''
 }
+
+function saveCloseCaptionAfterMinutes(minutes: number = 5) {
+  setInterval(
+    () => {
+      if (captionText) {
+        const currentSaveState = JSON.parse(
+          localStorage.getItem(currentStorageItemHistory)!
+        )
+
+        // if (currentSaveState.length === 0) {
+        const itemData = {
+          text: captionText.innerText,
+          time: `${diffInMinutes(new Date(), startedMeetingDate)} Minutes`,
+        }
+
+        currentSaveState.push(itemData)
+        // } else {
+        //   const newtext = mergeTexts(
+        //     captionText.innerText,
+        //     currentSaveState.history[currentSaveState.history.length - 1].text
+        //   )
+
+        //   const itemData = {
+        //     text: newtext,
+        //     time: diffInMinutes(new Date(), startedMeetingDate),
+        //   }
+
+        //   currentSaveState.history.push(itemData)
+        // }
+
+        localStorage.setItem(
+          currentStorageItemHistory,
+          JSON.stringify(currentSaveState)
+        )
+      }
+    },
+    minutes * 60 * 1000
+  )
+}
+
+function diffInMinutes(date1: Date, date2: Date): number {
+  const diffMs = Math.abs(date1.getTime() - date2.getTime())
+  return Math.floor(diffMs / (1000 * 60))
+}
+
+// function mergeTexts(a: string, b: string): string {
+//   const first = a.trim()
+//   const second = b.trim()
+//   let overlap = ''
+
+//   // find longest suffix of `first` that is a prefix of `second`
+//   for (let i = 1; i <= Math.min(first.length, second.length); i++) {
+//     if (first.endsWith(second.slice(0, i))) {
+//       overlap = second.slice(0, i)
+//     }
+//   }
+
+//   return first + second.slice(overlap.length)
+// }

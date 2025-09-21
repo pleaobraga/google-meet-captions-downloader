@@ -1,4 +1,4 @@
-import { SAVED_ITEMS_PREFIX } from '@/constants'
+import { HISTORY_SAVED_ITEMS_PREFIX, SAVED_ITEMS_PREFIX } from '@/constants'
 import {
   deletePastTranscriptions,
   downloadCaptions,
@@ -174,7 +174,7 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
       case 'GET_PAST_TRANSCRIPTIONS': {
         const [{ result }] = await chrome.scripting.executeScript({
           target: { tabId: currentWindowId },
-          args: [SAVED_ITEMS_PREFIX],
+          args: [SAVED_ITEMS_PREFIX, HISTORY_SAVED_ITEMS_PREFIX],
           func: getPastTranscriptions,
         })
         return sendResponse({

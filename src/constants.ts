@@ -6,3 +6,4 @@ export const MAX_VIDEO_HEIGHT = window.innerHeight - HEIGHT_AROUND_VIDEO
 export const MAX_VIDEO_WIDTH = MAX_VIDEO_HEIGHT * PORPORTION_WIDTH_RATE
 
 export const SAVED_ITEMS_PREFIX = 'captionText_'
+export const HISTORY_SAVED_ITEMS_PREFIX = 'history_captionText_'

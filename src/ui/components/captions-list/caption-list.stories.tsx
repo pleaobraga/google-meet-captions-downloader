@@ -1,5 +1,4 @@
-/* eslint-disable storybook/no-renderer-packages */
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { CaptionsList } from '.'
 
@@ -21,6 +20,7 @@ const items = {
     id: '123',
     text: 'Sample Caption',
     title: 'Sample Title',
+    history: [],
     onDelete: (id: string) => console.log(`Delete ${id}`),
   },
   '456': {
@@ -28,6 +28,10 @@ const items = {
     id: '456',
     text: 'Another Sample Caption',
     title: 'Another Sample Title',
+    history: [
+      { text: 'Initial caption text', time: '5 minutes' },
+      { text: 'Updated caption text', time: '10 minutes' },
+    ],
     onDelete: (id: string) => console.log(`Delete ${id}`),
   },
   '789': {
@@ -35,6 +39,10 @@ const items = {
     id: '789',
     text: 'Third Sample Caption',
     title: 'Third Sample Title',
+    history: [
+      { text: 'Initial caption text', time: '5 minutes' },
+      { text: 'Updated caption text', time: '10 minutes' },
+    ],
     onDelete: (id: string) => console.log(`Delete ${id}`),
   },
 }

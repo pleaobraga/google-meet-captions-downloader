@@ -86,13 +86,17 @@ export function downloadCaptions(formatted: string, filename?: string) {
   })
 }
 
-export function getPastTranscriptions(savedItemsPrefix: string) {
+export function getPastTranscriptions(
+  savedItemsPrefix: string,
+  historyItemsPrefix: string
+) {
   const pastTranscriptions: {
     [key: string]: {
       text: string
       timestamp: number
       id: string
       title: string
+      history: Array<{ text: string; time: string | number }>
     }
   } = {}
 
@@ -102,12 +106,20 @@ export function getPastTranscriptions(savedItemsPrefix: string) {
     if (key?.startsWith(savedItemsPrefix)) {
       const value = JSON.parse(localStorage.getItem(key)!)
 
+      const history =
+        JSON.parse(
+          localStorage.getItem(
+            key.replace(savedItemsPrefix, historyItemsPrefix)
+          )!
+        ) || []
+
       if (value) {
         pastTranscriptions[key] = {
           text: value.text,
           timestamp: Number(key.split('_')[1]),
           title: value.title,
           id: key,
+          history,
         }
       }
     }

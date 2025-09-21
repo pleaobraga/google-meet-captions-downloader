@@ -8,9 +8,17 @@ type Props = {
   text: string
   title: string
   onDelete: (id: string) => void
+  history: Array<{ text: string; time: string }>
 }
 
-export function CaptionListItem({ date, text, id, onDelete, title }: Props) {
+export function CaptionListItem({
+  date,
+  text,
+  id,
+  onDelete,
+  title,
+  history,
+}: Props) {
   const { downloadTranscript, deleteTranscript, isDeleting, isDownloading } =
     useCaptionItem()
 
@@ -31,6 +39,18 @@ export function CaptionListItem({ date, text, id, onDelete, title }: Props) {
           <h4 className="text-sm text-muted-foreground">{title}</h4>
         </div>
         <div className="flex gap-3">
+          {history && history.length > 0 && (
+            <Button
+              title="Download History"
+              variant="default"
+              size="icon"
+              disabled={isDownloading}
+              onClick={() => {}}
+            >
+              <MdDownload />
+            </Button>
+          )}
+
           <Button
             title="Download Transcription"
             variant="secondary"

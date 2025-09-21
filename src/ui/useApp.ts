@@ -5,7 +5,13 @@ export function useApp() {
   const [isLoading, setIsLoading] = useState(false)
   const [pastTranscriptions, setPastTranscriptions] = useState<Record<
     string,
-    { text: string; timestamp: number; id: string; title: string }
+    {
+      text: string
+      timestamp: number
+      id: string
+      title: string
+      history: Array<{ text: string; time: string }>
+    }
   > | null>(null)
 
   useEffect(() => {
