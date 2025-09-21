@@ -5,6 +5,7 @@ import {
   extractCaptions,
   formatCaptions,
   getPastTranscriptions,
+  transcriptHistoryNameByDate,
   transcriptNameByDate,
 } from '@/features/captions/captions'
 import { increaseVideoSize } from '@/features/resize-video/resize-video'
@@ -83,6 +84,46 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
           })
 
           const filename = transcriptNameByDate(message.payload.date)
+
+          downloadCaptions(formatted, filename)
+
+          sendResponse({ success: true })
+        } catch (error) {
+          const { errorMessage } = errorHandler(error)
+          sendResponse({ error: errorMessage })
+          console.error('Error extracting captions:', errorMessage)
+        }
+
+        break
+      }
+
+      case 'GET_HISTORY_CAPTION_TRANSCRIPT': {
+        try {
+          if (!message.payload.history)
+            throw new Error('No History text provided.')
+
+          const formatted = message.payload.history
+            .reduce(
+              (
+                acc: string,
+                item: { text: string; time: string },
+                index: number
+              ) => {
+                const formattedItem = formatCaptions({
+                  captions: item.text,
+                  date: message.payload.date,
+                  meetingTitle: message.payload.title,
+                  header: index > 0 ? `${item.time}\n\n` : '',
+                })
+                return acc + formattedItem + '\n\n'
+              },
+              ''
+            )
+            .trim()
+
+          if (!formatted) throw new Error('No formatted history available.')
+
+          const filename = transcriptHistoryNameByDate(message.payload.date)
 
           downloadCaptions(formatted, filename)
 

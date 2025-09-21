@@ -41,6 +41,25 @@ export function useCaptionItem() {
     }
   }
 
+  async function getHistoryCaptionTranscript({
+    date,
+    history,
+    title,
+  }: {
+    date: Date
+    history: Array<{ text: string; time: string | number }>
+    title: string
+  }): Promise<void> {
+    const { error: captionsError } = await chrome.runtime.sendMessage({
+      type: 'GET_HISTORY_CAPTION_TRANSCRIPT',
+      target: 'background',
+      payload: { date, history, title },
+    })
+
+    if (captionsError) {
+      toast.error(`Error extracting History captions: ${captionsError}`)
+    }
+  }
   const downloadTranscript = async ({
     date,
     text,
@@ -61,10 +80,25 @@ export function useCaptionItem() {
     setIsDeleting(false)
   }
 
+  const downloadHistoryTranscript = async ({
+    date,
+    history,
+    title,
+  }: {
+    date: Date
+    history: Array<{ text: string; time: string | number }>
+    title: string
+  }) => {
+    setIsDownloading(true)
+    await getHistoryCaptionTranscript({ date, history, title })
+    setIsDownloading(false)
+  }
+
   return {
     isDownloading,
     isDeleting,
     downloadTranscript,
     deleteTranscript,
+    downloadHistoryTranscript,
   }
 }

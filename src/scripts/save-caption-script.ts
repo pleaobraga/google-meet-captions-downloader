@@ -63,7 +63,7 @@ if (body) {
     characterData: true,
   })
   localStorage.setItem(currentStorageItemHistory, '[]')
-  saveCloseCaptionAfterMinutes()
+  saveCloseCaptionAfterMinutes(1)
 }
 
 function saveCaptionText(captionText: string) {

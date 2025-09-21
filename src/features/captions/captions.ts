@@ -4,10 +4,12 @@ export function formatCaptions({
   captions,
   date,
   meetingTitle,
+  header,
 }: {
   captions: string
   date?: Date
   meetingTitle?: string
+  header?: string
 }) {
   const text = captions.replace(/\r\n?/g, '\n').trim()
 
@@ -50,13 +52,17 @@ export function formatCaptions({
     .map((b) => `${b.speaker}: ${b.text}`)
     .join('\n\n')
 
+  if (header) {
+    return header + formattedTranscript
+  }
+
   const meetingDate = date
     ? new Date(date).toLocaleString()
     : 'no date provided'
 
-  const header = `Meeting: ${meetingTitle ?? 'No Meeting title provided'}\nDate: ${meetingDate}\n\n`
+  const newHeader = `Meeting: ${meetingTitle ?? 'No Meeting title provided'}\nDate: ${meetingDate}\n\n`
 
-  return header + formattedTranscript
+  return newHeader + formattedTranscript
 }
 
 export function extractCaptions() {
@@ -71,6 +77,12 @@ export function transcriptNameByDate(date?: Date) {
   const formattedDate = formatDateToFilename(date)
 
   return `formatted-transcript-${formattedDate}.txt`
+}
+
+export function transcriptHistoryNameByDate(date?: Date) {
+  const formattedDate = formatDateToFilename(date)
+
+  return `formatted-history-transcript-${formattedDate}.txt`
 }
 
 export function downloadCaptions(formatted: string, filename?: string) {
@@ -130,4 +142,7 @@ export function getPastTranscriptions(
 
 export function deletePastTranscriptions(id: string) {
   localStorage.removeItem(id)
+
+  const historyId = id.replace('captionText_', 'history_captionText_')
+  localStorage.removeItem(historyId)
 }

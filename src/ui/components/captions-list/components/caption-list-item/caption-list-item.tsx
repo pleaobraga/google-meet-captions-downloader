@@ -19,8 +19,13 @@ export function CaptionListItem({
   title,
   history,
 }: Props) {
-  const { downloadTranscript, deleteTranscript, isDeleting, isDownloading } =
-    useCaptionItem()
+  const {
+    downloadTranscript,
+    downloadHistoryTranscript,
+    deleteTranscript,
+    isDeleting,
+    isDownloading,
+  } = useCaptionItem()
 
   const handleDelete = async () => {
     try {
@@ -33,19 +38,21 @@ export function CaptionListItem({
 
   return (
     <li className="flex p-4 bg-[#292928] rounded-md">
-      <div className="flex items-center gap-4 justify-between w-full">
+      <div className="flex items-center gap-4 justify-between w-full flex-wrap">
         <div className="flex flex-col">
           <h3 className="text-xl font-medium">{date.toLocaleString()}</h3>
           <h4 className="text-sm text-muted-foreground">{title}</h4>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap">
           {history && history.length > 0 && (
             <Button
               title="Download History"
               variant="default"
               size="icon"
               disabled={isDownloading}
-              onClick={() => {}}
+              onClick={() =>
+                downloadHistoryTranscript({ date, history, title })
+              }
             >
               <MdDownload />
             </Button>
