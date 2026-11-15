@@ -36,12 +36,12 @@
 
 O `package.json` já não lista o `@storybook/addon-themes`, mas o Storybook ainda o usa. Depois de um `pnpm install` limpo, o Storybook quebra. Conserte isso primeiro, para ter uma base que funciona.
 
-- [ ] **Passo 1: anotar as versões do ambiente**
+- [x] **Passo 1: anotar as versões do ambiente** (Node v26.12.1, pnpm 12.15.0)
 
 Run: `node --version && pnpm --version`
 Anote os dois números. Eles são usados na Tarefa 0.2.
 
-- [ ] **Passo 2: tirar o addon de temas do Storybook**
+- [x] **Passo 2: tirar o addon de temas do Storybook**
 
 Em `.storybook/main.ts`, remova a linha `'@storybook/addon-themes',` do array `addons`.
 
@@ -75,17 +75,17 @@ const preview: Preview = {
 export default preview
 ```
 
-- [ ] **Passo 3: conferir que tudo funciona antes de atualizar**
+- [x] **Passo 3: conferir que tudo funciona antes de atualizar**
 
 Run: `pnpm install && pnpm exec playwright install chromium && pnpm lint && pnpm vitest run && pnpm build`
 Esperado: tudo passa. Se algo falhar **aqui**, o problema já existia antes da atualização: pare e mostre o erro ao usuário.
 
-- [ ] **Passo 4: guardar a lista de pacotes desatualizados**
+- [x] **Passo 4: guardar a lista de pacotes desatualizados**
 
 Run: `pnpm outdated`
 Copie a saída para a seção "Antes da atualização", no fim deste arquivo.
 
-- [ ] **Passo 5: commit**
+- [x] **Passo 5: commit**
 
 ```bash
 git add .storybook docs/superpowers/plans/2026-11-14-etapa-0-atualizar-pacotes.md
@@ -241,7 +241,103 @@ Se carregar, a etapa 0 está concluída. Siga para a [etapa 1](2026-11-14-etapa-
 
 ### Antes da atualização
 
-_Cole aqui a saída de `pnpm outdated` (Tarefa 0.1, Passo 4)._
+```text
+┌───────────────────────────────────┬─────────┬─────────┐
+│ Package                           │ Current │ Latest  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @mdx-js/react                     │ 3.1.0   │ 3.1.1   │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @testing-library/dom (dev)        │ 10.4.1  │ 10.4.2  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @testing-library/react (dev)      │ 16.3.0  │ 16.3.3  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ git-commit-msg-linter (dev)       │ 5.0.8   │ 5.0.10  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ react-spinners                    │ 0.17.0  │ 0.17.1  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ sonner                            │ 2.0.7   │ 2.0.8   │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @radix-ui/react-separator         │ 1.1.7   │ 1.2.0   │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @radix-ui/react-slot              │ 1.2.3   │ 1.5.0   │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @tailwindcss/vite                 │ 4.1.11  │ 4.3.5   │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @types/chrome (dev)               │ 0.1.4   │ 0.3.7   │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @types/react (dev)                │ 19.1.9  │ 19.3.0  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @types/react-dom (dev)            │ 19.1.7  │ 19.3.0  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ eslint-plugin-react-refresh (dev) │ 0.4.20  │ 0.5.7   │
+├───────────────────────────────────┼─────────┼─────────┤
+│ playwright (dev)                  │ 1.54.2  │ 1.65.1  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ prettier (dev)                    │ 3.6.2   │ 3.10.1  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ react                             │ 19.1.1  │ 19.3.1  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ react-dom                         │ 19.1.1  │ 19.3.1  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ react-icons                       │ 5.5.0   │ 5.7.0   │
+├───────────────────────────────────┼─────────┼─────────┤
+│ tailwind-merge                    │ 3.3.1   │ 3.7.0   │
+├───────────────────────────────────┼─────────┼─────────┤
+│ tailwindcss                       │ 4.1.11  │ 4.3.5   │
+├───────────────────────────────────┼─────────┼─────────┤
+│ tw-animate-css (dev)              │ 1.3.6   │ 1.4.0   │
+├───────────────────────────────────┼─────────┼─────────┤
+│ typescript-eslint (dev)           │ 8.38.0  │ 8.72.2  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @chromatic-com/storybook (dev)    │ 4.1.1   │ 5.6.0   │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @eslint/js (dev)                  │ 9.32.0  │ 10.0.1  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @storybook/addon-a11y (dev)       │ 9.1.7   │ 10.6.7  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @storybook/addon-docs (dev)       │ 9.1.7   │ 10.6.7  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @storybook/addon-onboarding (dev) │ 9.1.7   │ 10.6.7  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @storybook/addon-vitest (dev)     │ 9.1.7   │ 10.6.7  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @storybook/react-vite (dev)       │ 9.1.7   │ 10.6.7  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @testing-library/jest-dom (dev)   │ 6.8.0   │ 7.0.1   │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @types/node (dev)                 │ 24.1.0  │ 26.6.6  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @vitejs/plugin-react-swc (dev)    │ 3.11.0  │ 4.3.3   │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @vitest/browser (dev)             │ 3.2.4   │ 5.1.0   │
+├───────────────────────────────────┼─────────┼─────────┤
+│ @vitest/coverage-v8 (dev)         │ 3.2.4   │ 5.1.0   │
+├───────────────────────────────────┼─────────┼─────────┤
+│ eslint (dev)                      │ 9.32.0  │ 10.15.0 │
+├───────────────────────────────────┼─────────┼─────────┤
+│ eslint-plugin-react-hooks (dev)   │ 5.2.0   │ 7.1.1   │
+├───────────────────────────────────┼─────────┼─────────┤
+│ eslint-plugin-storybook (dev)     │ 9.1.7   │ 10.6.7  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ globals (dev)                     │ 16.3.0  │ 17.14.0 │
+├───────────────────────────────────┼─────────┼─────────┤
+│ jsdom (dev)                       │ 26.1.0  │ 31.0.1  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ lint-staged (dev)                 │ 16.1.4  │ 17.6.0  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ lucide-react                      │ 0.536.0 │ 1.72.0  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ markdown-to-jsx                   │ 7.7.13  │ 9.10.6  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ storybook (dev)                   │ 9.1.7   │ 10.6.7  │
+├───────────────────────────────────┼─────────┼─────────┤
+│ typescript (dev)                  │ 5.8.3   │ 7.0.2   │
+├───────────────────────────────────┼─────────┼─────────┤
+│ vite (dev)                        │ 7.0.6   │ 8.3.8   │
+├───────────────────────────────────┼─────────┼─────────┤
+│ vitest (dev)                      │ 3.2.4   │ 5.1.0   │
+└───────────────────────────────────┴─────────┴─────────┘
+```
 
 ### Depois da atualização
 
