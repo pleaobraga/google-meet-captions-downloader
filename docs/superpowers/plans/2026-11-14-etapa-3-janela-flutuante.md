@@ -419,7 +419,7 @@ Atende R4.1 a R4.3 e R4.8.
 - Modificar: `src/features/recording/meet-dom.ts`, `src/features/recording/content-controller.ts`, `src/entries/content-script.ts`, `vite.content.config.ts`
 - Teste: `src/features/floating-captions/meet-button.test.ts`, `hide-captions.test.ts`; acrescentar em `content-controller.test.ts`
 
-- [ ] **Passo 1: checagem manual da API (antes de escrever código)** _(pendente: precisa do usuário)_
+- [x] **Passo 1: checagem manual da API (antes de escrever código)** _(confirmado em 2026-11-15: a janela flutuante abre no Meet)_
 
 Peça ao usuário para abrir uma reunião no Meet, abrir o DevTools (F12), ir na aba Console, trocar o contexto de `top` para o da extensão (o seletor ao lado do filtro, opção `Google Meet Captions Downloader`) e rodar:
 
