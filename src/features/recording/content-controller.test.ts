@@ -18,13 +18,16 @@ import { startContentController } from './content-controller'
 let n = 0
 let controller: ReturnType<typeof startContentController> | null = null
 
-function start() {
+function start(
+  extra: Partial<Parameters<typeof startContentController>[0]> = {}
+) {
   controller = startContentController({
     doc: document,
     win: window,
     now: () => Date.now(),
     createId: () => `u${++n}`,
     tabToken: 'tab-1',
+    ...extra,
   })
   return controller.ready
 }
@@ -257,5 +260,67 @@ describe('content controller', () => {
     await start()
     await vi.advanceTimersByTimeAsync(1_500)
     expect(controller!.store.getSnapshot().status).toBe('idle')
+  })
+
+  describe('janela flutuante', () => {
+    test('o botão aparece durante a reunião e some com a extensão desligada', async () => {
+      goTo('/abc-defg-hij')
+      document.body.innerHTML = MEET_IN_CALL_EN
+      await start()
+      await vi.advanceTimersByTimeAsync(300)
+      expect(
+        document.getElementById('meet-captions-floating-button')
+      ).not.toBeNull()
+      await updateSettings({ enabled: false })
+      await vi.advanceTimersByTimeAsync(300)
+      expect(
+        document.getElementById('meet-captions-floating-button')
+      ).toBeNull()
+    })
+
+    test('abrir esconde as legendas do Meet e fechar mostra de novo', async () => {
+      let onClose = () => {}
+      const close = vi.fn(() => onClose())
+      const openFloatingWindow = vi.fn(
+        async (options: { onClose: () => void }) => {
+          onClose = options.onClose
+          return { close }
+        }
+      )
+      goTo('/abc-defg-hij')
+      document.body.innerHTML = MEET_IN_CALL_EN
+      await start({ openFloatingWindow })
+      await vi.advanceTimersByTimeAsync(300)
+
+      document.getElementById('meet-captions-floating-button')!.click()
+      await vi.advanceTimersByTimeAsync(300)
+      expect(openFloatingWindow).toHaveBeenCalledTimes(1)
+      const region = document.querySelector('[aria-label="Captions"]')!
+      expect(region).toHaveAttribute('data-meet-captions-hidden')
+
+      document.getElementById('meet-captions-floating-button')!.click()
+      await vi.advanceTimersByTimeAsync(300)
+      expect(close).toHaveBeenCalledTimes(1)
+      expect(
+        document.querySelector('[aria-label="Captions"]')
+      ).not.toHaveAttribute('data-meet-captions-hidden')
+    })
+
+    test('com a janela aberta, as falas continuam sendo gravadas', async () => {
+      const openFloatingWindow = vi.fn(async () => ({ close: () => {} }))
+      goTo('/abc-defg-hij')
+      document.body.innerHTML = MEET_IN_CALL_EN
+      await start({ openFloatingWindow })
+      await vi.advanceTimersByTimeAsync(300)
+      document.getElementById('meet-captions-floating-button')!.click()
+      await vi.advanceTimersByTimeAsync(300)
+      document.querySelector('#b2 > div:last-child')!.textContent =
+        'combinado então'
+      await vi.advanceTimersByTimeAsync(1_500)
+      const [summary] = await listMeetings()
+      expect(
+        (await getMeeting(summary.id))?.utterances.map((u) => u.text)
+      ).toContain('combinado então')
+    })
   })
 })

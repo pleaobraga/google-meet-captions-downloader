@@ -56,6 +56,14 @@ export function findTurnOnCaptionsButton(doc: Document): HTMLElement | null {
   return findButton(doc, MEET_LABELS.turnOnCaptions)
 }
 
+/** O botão de legendas do Meet, ligado ou desligado. */
+export function findCaptionsToggleButton(doc: Document): HTMLElement | null {
+  return (
+    findButton(doc, MEET_LABELS.turnOnCaptions) ??
+    findButton(doc, MEET_LABELS.turnOffCaptions)
+  )
+}
+
 export function isCaptionsOn(doc: Document): boolean {
   return (
     findButton(doc, MEET_LABELS.turnOffCaptions) !== null ||

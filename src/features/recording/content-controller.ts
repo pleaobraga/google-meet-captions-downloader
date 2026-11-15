@@ -26,6 +26,15 @@ import {
   type CaptionsStore,
   type FloatingStatus,
 } from '@/features/floating-captions/captions-store'
+import {
+  hideCaptions,
+  showCaptions,
+} from '@/features/floating-captions/hide-captions'
+import {
+  ensureFloatingButton,
+  removeFloatingButton,
+} from '@/features/floating-captions/meet-button'
+import type { FloatingWindowHandle } from '@/features/floating-captions/open-floating-window'
 import { HEARTBEAT_MS, Recorder } from './recorder'
 
 export const POLL_MS = 1_000
@@ -37,6 +46,11 @@ export type ControllerDeps = {
   now: () => number
   createId: () => string
   tabToken: string
+  openFloatingWindow?: (options: {
+    win: Window
+    store: CaptionsStore
+    onClose: () => void
+  }) => Promise<FloatingWindowHandle | null>
 }
 
 /** Liga a gravação à página do Meet. */
@@ -76,6 +90,35 @@ export function startContentController(deps: ControllerDeps): {
     )
   }
 
+  let floating: FloatingWindowHandle | null = null
+
+  function onFloatingButtonClick() {
+    if (floating) {
+      floating.close()
+      return
+    }
+    if (!deps.openFloatingWindow) return
+    // Chamada direta dentro do clique: a API exige um gesto do usuário.
+    void deps
+      .openFloatingWindow({
+        win: deps.win,
+        store,
+        onClose: () => {
+          floating = null
+          showCaptions(deps.doc)
+        },
+      })
+      .then((handle) => {
+        floating = handle
+        if (handle) hideCaptions(deps.doc)
+      })
+  }
+
+  function closeFloating() {
+    floating?.close()
+    removeFloatingButton(deps.doc)
+  }
+
   let stoppedCodes: string[] = []
   let lastStoppedPublishAt = 0
 
@@ -101,6 +144,7 @@ export function startContentController(deps: ControllerDeps): {
     try {
       status = await evaluateInner()
     } finally {
+      if (status === 'idle' || status === 'stopped') closeFloating()
       syncStore(status)
     }
   }
@@ -169,6 +213,9 @@ export function startContentController(deps: ControllerDeps): {
         ? 'on'
         : 'unknown'
     recorder.observe(blocks, captionsState, region)
+    ensureFloatingButton(deps.doc, onFloatingButtonClick)
+    // O Meet pode recriar a região de legendas: esconde de novo a cada ciclo.
+    if (floating) hideCaptions(deps.doc)
 
     const title = getMeetingTitle(deps.doc)
     if (title) recorder.setTitle(title)
@@ -225,6 +272,7 @@ export function startContentController(deps: ControllerDeps): {
       await queue
       await recorder.leave()
       await clearStopped()
+      closeFloating()
     },
   }
 }
