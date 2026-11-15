@@ -26,3 +26,6 @@ pnpm-workspace.yaml
 
 *storybook.log
 storybook-static
+
+# brainstorming mockups
+.superpowers/
