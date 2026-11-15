@@ -54,4 +54,16 @@ describe('LiveStatusLine', () => {
       screen.getByText('Não foi possível ler as legendas desta reunião')
     ).toBeInTheDocument()
   })
+
+  test('gravação parada', () => {
+    render(
+      <LiveStatusLine
+        live={{ ...base, state: 'stopped', meetingId: null }}
+        now={since}
+      />
+    )
+    expect(
+      screen.getByText('Gravação parada nesta reunião')
+    ).toBeInTheDocument()
+  })
 })

@@ -2,10 +2,13 @@ import { ArrowRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { disableExtension } from '@/features/extension-toggle/disable-extension'
+import { stopRecordingThisMeeting } from '@/features/extension-toggle/stop-recording'
 import { ExtensionToggle } from '@/features/extension-toggle/extension-toggle'
 import { useLiveStatus } from '@/features/extension-toggle/use-live-status'
 import { useSettings } from '@/features/extension-toggle/use-settings'
+import { resumeRecording } from '@/shared/storage'
 import { LiveStatusLine } from './live-status-line'
+import { StopRecordingButton } from './stop-recording-button'
 
 const CLOCK_MS = 30_000
 
@@ -42,6 +45,20 @@ export function PopupApp() {
       )}
 
       <LiveStatusLine live={live} now={now} />
+
+      {settings?.enabled && live && (
+        <StopRecordingButton
+          live={live}
+          onStop={({ discard }) =>
+            stopRecordingThisMeeting({
+              code: live.code,
+              meetingId: live.meetingId,
+              discard,
+            })
+          }
+          onResume={() => resumeRecording(live.code)}
+        />
+      )}
 
       <Button
         onClick={() => {

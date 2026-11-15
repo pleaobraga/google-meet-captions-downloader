@@ -7,11 +7,13 @@ import {
   type MeetingSummary,
   type Settings,
 } from './types'
+import { sameLocalDay } from './time'
 
 export const STORAGE_KEYS = {
   settings: 'settings',
   index: 'meetingIndex',
   live: 'live',
+  stops: 'recordingStops',
   meeting: (id: string) => `meeting:${id}`,
   diagnostics: (id: string) => `diagnostics:${id}`,
 }
@@ -191,4 +193,30 @@ export async function listDiagnostics(): Promise<DiagnosticSummary[]> {
       }
     })
     .sort((a, b) => b.startedAt - a.startedAt)
+}
+
+type RecordingStop = { code: string; at: number }
+
+async function readStops(): Promise<RecordingStop[]> {
+  return (await read<RecordingStop[]>(STORAGE_KEYS.stops)) ?? []
+}
+
+/** Para de gravar a reunião com este código, só no dia de `now` (R3.9). */
+export async function stopRecording(code: string, now: number): Promise<void> {
+  const stops = (await readStops()).filter(
+    (stop) => stop.code !== code && sameLocalDay(stop.at, now)
+  )
+  stops.push({ code, at: now })
+  await chrome.storage.local.set({ [STORAGE_KEYS.stops]: stops })
+}
+
+export async function resumeRecording(code: string): Promise<void> {
+  const stops = (await readStops()).filter((stop) => stop.code !== code)
+  await chrome.storage.local.set({ [STORAGE_KEYS.stops]: stops })
+}
+
+export async function getStoppedCodes(now: number): Promise<string[]> {
+  return (await readStops())
+    .filter((stop) => sameLocalDay(stop.at, now))
+    .map((stop) => stop.code)
 }

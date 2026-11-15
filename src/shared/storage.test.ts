@@ -16,6 +16,9 @@ import {
   listMeetings,
   onSettingsChange,
   renameMeeting,
+  resumeRecording,
+  getStoppedCodes,
+  stopRecording,
   saveDiagnostics,
   saveMeeting,
   setLiveStatus,
@@ -224,5 +227,30 @@ describe('renomear e apagar', () => {
     await deleteDiagnostics('abc-defg-hij_1000')
     expect(await getDiagnostics('abc-defg-hij_1000')).toBeUndefined()
     expect(await getMeeting('abc-defg-hij_1000')).toBeDefined()
+  })
+})
+
+describe('parar de gravar uma reunião', () => {
+  const day1 = new Date('2026-11-14T10:00:00-03:00').getTime()
+  const day2 = new Date('2026-11-15T10:00:00-03:00').getTime()
+
+  test('parar e retomar', async () => {
+    await stopRecording('abc-defg-hij', day1)
+    expect(await getStoppedCodes(day1)).toEqual(['abc-defg-hij'])
+    await resumeRecording('abc-defg-hij')
+    expect(await getStoppedCodes(day1)).toEqual([])
+  })
+
+  test('a parada só vale no mesmo dia', async () => {
+    await stopRecording('abc-defg-hij', day1)
+    expect(await getStoppedCodes(day2)).toEqual([])
+  })
+
+  test('parar de novo não duplica e limpa entradas de outros dias', async () => {
+    await stopRecording('aaa-aaaa-aaa', day1)
+    await stopRecording('abc-defg-hij', day2)
+    await stopRecording('abc-defg-hij', day2)
+    const raw = await chrome.storage.local.get('recordingStops')
+    expect(raw.recordingStops).toEqual([{ code: 'abc-defg-hij', at: day2 }])
   })
 })

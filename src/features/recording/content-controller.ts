@@ -1,4 +1,12 @@
-import { getSettings, onSettingsChange } from '@/shared/storage'
+import {
+  STORAGE_KEYS,
+  clearLiveStatus,
+  getSettings,
+  getStoppedCodes,
+  onSettingsChange,
+  onStorageKeysChange,
+  setLiveStatus,
+} from '@/shared/storage'
 import {
   DEFAULT_SETTINGS,
   type CaptionsState,
@@ -13,7 +21,7 @@ import {
   isInCall,
   readCaptionBlocks,
 } from './meet-dom'
-import { Recorder } from './recorder'
+import { HEARTBEAT_MS, Recorder } from './recorder'
 
 export const POLL_MS = 1_000
 export const OBSERVE_DEBOUNCE_MS = 100
@@ -43,6 +51,15 @@ export function startContentController(deps: ControllerDeps): {
     language: deps.win.navigator.language,
   })
 
+  let stoppedCodes: string[] = []
+  let lastStoppedPublishAt = 0
+
+  async function clearStopped(): Promise<void> {
+    if (lastStoppedPublishAt === 0) return
+    lastStoppedPublishAt = 0
+    await clearLiveStatus(deps.tabToken)
+  }
+
   let queue: Promise<void> = Promise.resolve()
   let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -57,11 +74,37 @@ export function startContentController(deps: ControllerDeps): {
     if (disposed) return
     if (!settings.enabled) {
       if (recorder.active) await recorder.leave()
+      await clearStopped()
       return
     }
 
     const code = parseMeetingCode(deps.win.location.href)
     const inCall = code !== null && isInCall(deps.doc)
+
+    // Gravação parada só nesta reunião (R3.9): sai e publica o estado 'stopped'.
+    const stopped = inCall && code !== null && stoppedCodes.includes(code)
+    if (stopped) {
+      if (recorder.active) await recorder.leave()
+      const now = deps.now()
+      if (
+        lastStoppedPublishAt === 0 ||
+        now - lastStoppedPublishAt >= HEARTBEAT_MS
+      ) {
+        lastStoppedPublishAt = now
+        await setLiveStatus({
+          meetingId: null,
+          code,
+          title: getMeetingTitle(deps.doc),
+          since: now,
+          heartbeatAt: now,
+          state: 'stopped',
+          utteranceCount: 0,
+          tabToken: deps.tabToken,
+        })
+      }
+      return
+    }
+    await clearStopped()
 
     if (recorder.active && (!inCall || recorder.code !== code)) {
       await recorder.leave()
@@ -115,15 +158,23 @@ export function startContentController(deps: ControllerDeps): {
     settings = next
     void run()
   })
+  const refreshStops = async () => {
+    stoppedCodes = await getStoppedCodes(deps.now())
+  }
+  const unsubscribeStops = onStorageKeysChange([STORAGE_KEYS.stops], () => {
+    void refreshStops().then(run)
+  })
   const onPageHide = () => {
     void recorder.leave()
   }
   deps.win.addEventListener('pagehide', onPageHide)
 
-  const ready = getSettings().then((loaded) => {
-    settings = loaded
-    return run()
-  })
+  const ready = Promise.all([getSettings(), refreshStops()]).then(
+    ([loaded]) => {
+      settings = loaded
+      return run()
+    }
+  )
 
   return {
     ready,
@@ -133,9 +184,11 @@ export function startContentController(deps: ControllerDeps): {
       if (debounceTimer) clearTimeout(debounceTimer)
       clearInterval(poll)
       unsubscribeSettings()
+      unsubscribeStops()
       deps.win.removeEventListener('pagehide', onPageHide)
       await queue
       await recorder.leave()
+      await clearStopped()
     },
   }
 }

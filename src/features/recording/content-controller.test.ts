@@ -4,6 +4,8 @@ import {
   getMeeting,
   getSettings,
   listMeetings,
+  resumeRecording,
+  stopRecording,
   updateSettings,
 } from '@/shared/storage'
 import {
@@ -189,5 +191,49 @@ describe('content controller', () => {
     await updateSettings({ enabled: true })
     await vi.advanceTimersByTimeAsync(1_500)
     expect(await listMeetings()).toHaveLength(1)
+  })
+
+  test('parar de gravar esta reunião e depois retomar', async () => {
+    goTo('/abc-defg-hij')
+    document.body.innerHTML = MEET_IN_CALL_EN
+    await start()
+    await vi.advanceTimersByTimeAsync(1_500)
+    const [summary] = await listMeetings()
+
+    await stopRecording('abc-defg-hij', Date.now())
+    await vi.advanceTimersByTimeAsync(200)
+    expect((await getLiveStatus())?.state).toBe('stopped')
+
+    document.querySelector('#b2 > div:last-child')!.textContent =
+      'isto não é gravado'
+    await vi.advanceTimersByTimeAsync(3_000)
+    const texts = (await getMeeting(summary.id))?.utterances.map((u) => u.text)
+    expect(texts).not.toContain('isto não é gravado')
+
+    await resumeRecording('abc-defg-hij')
+    await vi.advanceTimersByTimeAsync(1_500)
+    expect((await getLiveStatus())?.state).toBe('recording')
+    expect((await getMeeting(summary.id))?.sessions).toHaveLength(2)
+  })
+
+  test('a parada continua valendo depois de recarregar a página', async () => {
+    await stopRecording('abc-defg-hij', Date.now())
+    goTo('/abc-defg-hij')
+    document.body.innerHTML = MEET_IN_CALL_EN
+    await start()
+    await vi.advanceTimersByTimeAsync(3_000)
+    expect(await listMeetings()).toEqual([])
+    expect((await getLiveStatus())?.state).toBe('stopped')
+  })
+
+  test('sair da chamada com a gravação parada limpa o status', async () => {
+    await stopRecording('abc-defg-hij', Date.now())
+    goTo('/abc-defg-hij')
+    document.body.innerHTML = MEET_IN_CALL_EN
+    await start()
+    await vi.advanceTimersByTimeAsync(1_500)
+    document.body.innerHTML = '<p>Você saiu da reunião</p>'
+    await vi.advanceTimersByTimeAsync(1_500)
+    expect(await getLiveStatus()).toBeUndefined()
   })
 })
