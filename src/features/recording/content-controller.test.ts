@@ -236,4 +236,26 @@ describe('content controller', () => {
     await vi.advanceTimersByTimeAsync(1_500)
     expect(await getLiveStatus()).toBeUndefined()
   })
+
+  test('a store acompanha as falas ao vivo', async () => {
+    goTo('/abc-defg-hij')
+    document.body.innerHTML = MEET_IN_CALL_EN
+    await start()
+    await vi.advanceTimersByTimeAsync(300)
+    expect(controller!.store.getSnapshot().status).toBe('recording')
+    expect(controller!.store.getSnapshot().utterances).toHaveLength(2)
+    document.querySelector('#b2 > div:last-child')!.textContent =
+      'combinado então'
+    await vi.advanceTimersByTimeAsync(300)
+    expect(
+      controller!.store.getSnapshot().utterances.map((u) => u.text)
+    ).toContain('combinado então')
+  })
+
+  test('a store fica ociosa fora de reunião', async () => {
+    document.body.innerHTML = MEET_LANDING
+    await start()
+    await vi.advanceTimersByTimeAsync(1_500)
+    expect(controller!.store.getSnapshot().status).toBe('idle')
+  })
 })

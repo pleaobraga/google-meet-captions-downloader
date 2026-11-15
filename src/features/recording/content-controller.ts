@@ -21,6 +21,11 @@ import {
   isInCall,
   readCaptionBlocks,
 } from './meet-dom'
+import {
+  createCaptionsStore,
+  type CaptionsStore,
+  type FloatingStatus,
+} from '@/features/floating-captions/captions-store'
 import { HEARTBEAT_MS, Recorder } from './recorder'
 
 export const POLL_MS = 1_000
@@ -38,6 +43,7 @@ export type ControllerDeps = {
 export function startContentController(deps: ControllerDeps): {
   ready: Promise<void>
   dispose: () => Promise<void>
+  store: CaptionsStore
 } {
   let settings: Settings = DEFAULT_SETTINGS
   let disposed = false
@@ -50,6 +56,25 @@ export function startContentController(deps: ControllerDeps): {
     userAgent: deps.win.navigator.userAgent,
     language: deps.win.navigator.language,
   })
+
+  const store = createCaptionsStore()
+  let lastStoreKey = ''
+
+  function syncStore(status: FloatingStatus) {
+    const key = `${status}:${recorder.version}`
+    if (key === lastStoreKey) return
+    lastStoreKey = key
+    const snap = recorder.snapshot()
+    store.set(
+      snap && status !== 'idle' && status !== 'stopped'
+        ? {
+            status: snap.state,
+            utterances: snap.utterances,
+            sessions: snap.sessions,
+          }
+        : { status, utterances: [], sessions: [] }
+    )
+  }
 
   let stoppedCodes: string[] = []
   let lastStoppedPublishAt = 0
@@ -72,10 +97,19 @@ export function startContentController(deps: ControllerDeps): {
 
   async function evaluate(): Promise<void> {
     if (disposed) return
+    let status: FloatingStatus = 'idle'
+    try {
+      status = await evaluateInner()
+    } finally {
+      syncStore(status)
+    }
+  }
+
+  async function evaluateInner(): Promise<FloatingStatus> {
     if (!settings.enabled) {
       if (recorder.active) await recorder.leave()
       await clearStopped()
-      return
+      return 'idle'
     }
 
     const code = parseMeetingCode(deps.win.location.href)
@@ -102,7 +136,7 @@ export function startContentController(deps: ControllerDeps): {
           tabToken: deps.tabToken,
         })
       }
-      return
+      return 'stopped'
     }
     await clearStopped()
 
@@ -115,7 +149,7 @@ export function startContentController(deps: ControllerDeps): {
       // Eu já desliguei as legendas nesta reunião: não religa ao recarregar (R3.3).
       if (recorder.captionsOffByUser) autostart.skip()
     }
-    if (!recorder.active || recorder.blocked) return
+    if (!recorder.active || recorder.blocked) return 'idle'
 
     autostart.tick(deps.doc)
     const region = findCaptionsRegion(deps.doc)
@@ -138,6 +172,7 @@ export function startContentController(deps: ControllerDeps): {
 
     const title = getMeetingTitle(deps.doc)
     if (title) recorder.setTitle(title)
+    return 'recording'
   }
 
   const observer = new MutationObserver(() => {
@@ -178,6 +213,7 @@ export function startContentController(deps: ControllerDeps): {
 
   return {
     ready,
+    store,
     dispose: async () => {
       disposed = true
       observer.disconnect()

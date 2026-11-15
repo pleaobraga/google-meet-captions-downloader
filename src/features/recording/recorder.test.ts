@@ -259,4 +259,20 @@ describe('Recorder', () => {
     expect(saved?.customTitle).toBe('Meu título')
     expect(saved?.utterances[0].text).toBe('oi pessoal')
   })
+
+  test('version aumenta quando algo muda e snapshot devolve cópias', async () => {
+    const recorder = createRecorder()
+    expect(recorder.snapshot()).toBeNull()
+    await recorder.join(CODE, 'Daily')
+    const v1 = recorder.version
+    recorder.observe(blocks('oi'), 'on', null)
+    const v2 = recorder.version
+    expect(v2).toBeGreaterThan(v1)
+    recorder.observe(blocks('oi'), 'on', null)
+    expect(recorder.version).toBe(v2)
+    const snap = recorder.snapshot()
+    expect(snap?.utterances.map((u) => u.text)).toEqual(['oi'])
+    snap!.utterances[0].text = 'alterado'
+    expect(recorder.snapshot()?.utterances[0].text).toBe('oi')
+  })
 })

@@ -13,6 +13,8 @@ import type {
   LiveState,
   Meeting,
   ObservedBlock,
+  Session,
+  Utterance,
 } from '@/shared/types'
 import { CaptionTracker } from './caption-tracker'
 import { DiagnosticRecorder } from './diagnostics'
@@ -48,6 +50,7 @@ export class Recorder {
   private diagnostics: DiagnosticRecorder | null = null
   private blockedCode: string | null = null
   private sawCaptionsOn = false
+  private versionCounter = 0
 
   constructor(options: RecorderOptions) {
     this.options = options
@@ -64,6 +67,25 @@ export class Recorder {
 
   get code(): string | null {
     return this.meeting?.code ?? this.blockedCode ?? null
+  }
+
+  /** Aumenta sempre que algo visível muda (falas, estado, entrar ou sair). */
+  get version(): number {
+    return this.versionCounter
+  }
+
+  snapshot(): {
+    utterances: Utterance[]
+    sessions: Session[]
+    state: LiveState
+  } | null {
+    const meeting = this.meeting
+    if (!meeting) return null
+    return {
+      utterances: this.tracker.utterances.map((u) => ({ ...u })),
+      sessions: meeting.sessions.map((s) => ({ ...s })),
+      state: this.state,
+    }
   }
 
   get captionsOffByUser(): boolean {
@@ -120,6 +142,7 @@ export class Recorder {
 
     this.state = 'recording'
     this.missingSince = null
+    this.versionCounter++
     this.heartbeatTimer = setInterval(() => this.heartbeat(), HEARTBEAT_MS)
     await this.publishLive()
   }
@@ -164,6 +187,7 @@ export class Recorder {
     }
 
     if (changed) this.scheduleSave()
+    if (changed || this.state !== previousState) this.versionCounter++
     if (this.state !== previousState) void this.publishLive()
   }
 
@@ -191,6 +215,7 @@ export class Recorder {
     if (!meeting) return
     // Zera antes de qualquer await: um timer pendente não pode salvar depois.
     this.meeting = null
+    this.versionCounter++
 
     this.clearSaveTimer()
     if (this.heartbeatTimer) clearInterval(this.heartbeatTimer)
