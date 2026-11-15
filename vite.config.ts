@@ -8,7 +8,6 @@ import { storybookTest } from '@storybook/addon-vitest/vitest-plugin'
 import { playwright } from '@vitest/browser-playwright'
 import path from 'node:path'
 const dirname = import.meta.dirname
-const rootNamed = new Set(['background', 'save-caption-script'])
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
@@ -20,19 +19,16 @@ export default defineConfig({
   },
   build: {
     sourcemap: true,
-    rollupOptions: {
+    rolldownOptions: {
       input: {
-        main: path.resolve(dirname, 'index.html'),
+        popup: path.resolve(dirname, 'popup.html'),
+        meetings: path.resolve(dirname, 'meetings.html'),
         background: path.resolve(dirname, 'src/entries/background.ts'),
-        'save-caption-script': path.resolve(
-          dirname,
-          'src/scripts/save-caption-script.ts'
-        ),
       },
       output: {
         entryFileNames: (chunk) =>
-          rootNamed.has(chunk.name)
-            ? `${chunk.name}.js` // put at dist root
+          chunk.name === 'background'
+            ? 'background.js'
             : 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash][extname]',
@@ -68,9 +64,11 @@ export default defineConfig({
       {
         extends: true,
         test: {
+          name: 'unit',
           environment: 'jsdom',
           setupFiles: ['./vitest.setup.ts'],
           globals: true,
+          env: { TZ: 'America/Sao_Paulo' },
         },
       },
     ],

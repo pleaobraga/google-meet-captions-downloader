@@ -1,7 +1,7 @@
 import type { Preview } from '@storybook/react-vite'
 import { themes } from 'storybook/theming'
 
-import '../src/ui/index.css'
+import '../src/styles/index.css'
 
 document.documentElement.classList.add('dark')
 

@@ -23,5 +23,18 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    // Componentes gerados pelo shadcn exportam as variantes de estilo junto com o componente.
+    files: ['src/components/ui/**/*.tsx'],
+    rules: {
+      'react-refresh/only-export-components': [
+        'error',
+        {
+          allowConstantExport: true,
+          allowExportNames: ['buttonVariants', 'badgeVariants'],
+        },
+      ],
+    },
+  },
   storybook.configs['flat/recommended'],
 ])
