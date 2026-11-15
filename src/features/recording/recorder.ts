@@ -229,6 +229,10 @@ export class Recorder {
     if (this.diagnostics) await saveDiagnostics(this.diagnostics.toLog())
     if (!this.persisted && meeting.utterances.length === 0) return
     this.persisted = true
+    // Preserva o título que eu dei na tela de reuniões (R5.8).
+    const stored = await getMeeting(meeting.id)
+    if (stored?.customTitle) meeting.customTitle = stored.customTitle
+    else delete meeting.customTitle
     await saveMeeting(structuredClone(meeting))
     if (this.meeting === meeting) void this.publishLive()
   }

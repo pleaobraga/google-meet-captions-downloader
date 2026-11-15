@@ -3,6 +3,7 @@ import {
   getLiveStatus,
   getMeeting,
   listMeetings,
+  renameMeeting,
   saveMeeting,
   setLiveStatus,
 } from '@/shared/storage'
@@ -243,5 +244,19 @@ describe('Recorder', () => {
       true
     )
     expect(await listMeetings()).toEqual([])
+  })
+
+  test('o título que eu dei sobrevive aos salvamentos da gravação', async () => {
+    const recorder = createRecorder()
+    await recorder.join(CODE, 'Daily')
+    recorder.observe(blocks('oi'), 'on', null)
+    await vi.advanceTimersByTimeAsync(1_000)
+    const [summary] = await listMeetings()
+    await renameMeeting(summary.id, 'Meu título')
+    recorder.observe(blocks('oi pessoal'), 'on', null)
+    await vi.advanceTimersByTimeAsync(2_000)
+    const saved = await getMeeting(summary.id)
+    expect(saved?.customTitle).toBe('Meu título')
+    expect(saved?.utterances[0].text).toBe('oi pessoal')
   })
 })

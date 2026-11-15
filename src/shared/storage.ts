@@ -109,15 +109,34 @@ export async function findLatestMeetingByCode(
   return (await listMeetings()).find((summary) => summary.code === code)
 }
 
-export async function deleteMeeting(id: string): Promise<void> {
+export async function deleteMeetings(ids: string[]): Promise<void> {
+  if (ids.length === 0) return
   const index = await readIndex()
   await chrome.storage.local.set({
-    [STORAGE_KEYS.index]: index.filter((summary) => summary.id !== id),
+    [STORAGE_KEYS.index]: index.filter((summary) => !ids.includes(summary.id)),
   })
-  await chrome.storage.local.remove([
-    STORAGE_KEYS.meeting(id),
-    STORAGE_KEYS.diagnostics(id),
-  ])
+  await chrome.storage.local.remove(
+    ids.flatMap((id) => [
+      STORAGE_KEYS.meeting(id),
+      STORAGE_KEYS.diagnostics(id),
+    ])
+  )
+}
+
+export async function deleteMeeting(id: string): Promise<void> {
+  return deleteMeetings([id])
+}
+
+export async function renameMeeting(
+  id: string,
+  customTitle: string
+): Promise<void> {
+  const meeting = await getMeeting(id)
+  if (!meeting) return
+  const title = customTitle.trim()
+  if (title) meeting.customTitle = title
+  else delete meeting.customTitle
+  await saveMeeting(meeting)
 }
 
 export async function getLiveStatus(
@@ -151,6 +170,10 @@ export async function getDiagnostics(
   meetingId: string
 ): Promise<DiagnosticLog | undefined> {
   return read<DiagnosticLog>(STORAGE_KEYS.diagnostics(meetingId))
+}
+
+export async function deleteDiagnostics(meetingId: string): Promise<void> {
+  await chrome.storage.local.remove(STORAGE_KEYS.diagnostics(meetingId))
 }
 
 export async function listDiagnostics(): Promise<DiagnosticSummary[]> {

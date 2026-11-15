@@ -4,7 +4,9 @@ import type { DiagnosticLog, LiveStatus, Meeting } from './types'
 import {
   STORAGE_KEYS,
   clearLiveStatus,
+  deleteDiagnostics,
   deleteMeeting,
+  deleteMeetings,
   findLatestMeetingByCode,
   getDiagnostics,
   getLiveStatus,
@@ -13,6 +15,7 @@ import {
   listDiagnostics,
   listMeetings,
   onSettingsChange,
+  renameMeeting,
   saveDiagnostics,
   saveMeeting,
   setLiveStatus,
@@ -184,5 +187,42 @@ describe('diagnostics', () => {
   test('as chaves seguem o padrão', () => {
     expect(STORAGE_KEYS.meeting('x')).toBe('meeting:x')
     expect(STORAGE_KEYS.diagnostics('x')).toBe('diagnostics:x')
+  })
+})
+
+describe('renomear e apagar', () => {
+  test('renameMeeting grava o título, e vazio volta ao título do Meet', async () => {
+    await saveMeeting(meeting())
+    await renameMeeting('abc-defg-hij_1000', '  Planejamento  ')
+    expect((await getMeeting('abc-defg-hij_1000'))?.customTitle).toBe(
+      'Planejamento'
+    )
+    expect((await listMeetings())[0].customTitle).toBe('Planejamento')
+    await renameMeeting('abc-defg-hij_1000', '   ')
+    expect((await getMeeting('abc-defg-hij_1000'))?.customTitle).toBeUndefined()
+  })
+
+  test('renameMeeting ignora reunião que não existe', async () => {
+    await renameMeeting('nao-existe', 'x')
+    expect(await listMeetings()).toEqual([])
+  })
+
+  test('deleteMeetings apaga várias de uma vez, com os diagnósticos', async () => {
+    await saveMeeting(meeting({ id: 'a' }))
+    await saveMeeting(meeting({ id: 'b' }))
+    await saveMeeting(meeting({ id: 'c' }))
+    await saveDiagnostics({ ...diagLog(), meetingId: 'a' })
+    await deleteMeetings(['a', 'b'])
+    expect((await listMeetings()).map((m) => m.id)).toEqual(['c'])
+    expect(await getMeeting('a')).toBeUndefined()
+    expect(await getDiagnostics('a')).toBeUndefined()
+  })
+
+  test('deleteDiagnostics apaga só o diagnóstico', async () => {
+    await saveMeeting(meeting())
+    await saveDiagnostics(diagLog())
+    await deleteDiagnostics('abc-defg-hij_1000')
+    expect(await getDiagnostics('abc-defg-hij_1000')).toBeUndefined()
+    expect(await getMeeting('abc-defg-hij_1000')).toBeDefined()
   })
 })
