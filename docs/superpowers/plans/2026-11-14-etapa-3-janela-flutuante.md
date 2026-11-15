@@ -828,4 +828,6 @@ git commit -m "feat: open captions in a floating always-on-top window"
 
 Se no item 7 ficar uma faixa vazia, isso é o comportamento mínimo aceito pelo R4.8. Registre para o usuário e **não** tente corrigir sem um arquivo de diagnóstico que mostre a estrutura da página.
 
+> **Nota (2026-11-15, verificação no Chrome):** ficou a faixa vazia. Testes na página real mostraram que o Meet reserva o espaço das legendas no `<main>` da área de vídeo (`inset` com `bottom` = barra + legendas) a partir do estado "legendas ligadas", e não recalcula o tamanho dos vídeos quando a caixa das legendas some ou quando o `<main>` cresce. A solução adotada: `hideCaptions` esconde a caixa inteira das legendas (`findCaptionsContainer`) e `expand-video.ts` aplica um zoom visual (`transform`) no `<main>`, calculado por `computeVideoZoom` para os vídeos ocuparem o espaço até a barra de botões. O zoom é recalculado a cada ciclo e desfeito em `showCaptions`. Também se descobriu que, em silêncio, o Meet tira a região de legendas da página; o controller passou a tratar "botão de legendas ligado sem região" como silêncio, e não como falha de leitura.
+
 ---

@@ -2,6 +2,7 @@ import {
   findCaptionsRegion,
   findLeaveCallButton,
 } from '@/features/recording/meet-dom'
+import { expandVideo, restoreVideo } from './expand-video'
 
 export const HIDE_STYLE_ID = 'meet-captions-hide-style'
 export const HIDDEN_ATTR = 'data-meet-captions-hidden'
@@ -28,7 +29,10 @@ export function findCaptionsContainer(doc: Document): HTMLElement | null {
   return box
 }
 
-/** Esconde as legendas da página do Meet; o texto continua sendo lido (R4.8). */
+/**
+ * Esconde as legendas da página do Meet e amplia o vídeo no lugar delas. O
+ * texto continua sendo lido (R4.8).
+ */
 export function hideCaptions(doc: Document): void {
   if (!doc.getElementById(HIDE_STYLE_ID)) {
     const style = doc.createElement('style')
@@ -37,6 +41,7 @@ export function hideCaptions(doc: Document): void {
     doc.head.append(style)
   }
   findCaptionsContainer(doc)?.setAttribute(HIDDEN_ATTR, '')
+  expandVideo(doc)
 }
 
 export function showCaptions(doc: Document): void {
@@ -44,4 +49,5 @@ export function showCaptions(doc: Document): void {
   doc
     .querySelectorAll(`[${HIDDEN_ATTR}]`)
     .forEach((el) => el.removeAttribute(HIDDEN_ATTR))
+  restoreVideo(doc)
 }

@@ -13,6 +13,7 @@ import {
   hideCaptions,
   showCaptions,
 } from './hide-captions'
+import { ZOOM_ATTR } from './expand-video'
 
 beforeEach(() => {
   document.head.innerHTML = ''
@@ -61,4 +62,38 @@ test('sem o botão de sair, esconde só a região de legendas', () => {
   hideCaptions(document)
   expect(findCaptionsRegion(document)).toHaveAttribute(HIDDEN_ATTR)
   expect(document.querySelectorAll(`[${HIDDEN_ATTR}]`)).toHaveLength(1)
+})
+
+test('esconder as legendas amplia o vídeo e mostrar desfaz o zoom', () => {
+  document.body.innerHTML = `
+<div>
+  <main id="stage"><video id="speaker"></video></main>
+  <div id="captions-box">${CAPTIONS_REGION_EN}</div>
+  <div id="toolbar"><button aria-label="Leave call"></button></div>
+</div>`
+  const rect = (x: number, y: number, width: number, height: number) => () =>
+    DOMRect.fromRect({ x, y, width, height })
+  document.getElementById('stage')!.getBoundingClientRect = rect(
+    16,
+    64,
+    1888,
+    591
+  )
+  document.getElementById('speaker')!.getBoundingClientRect = rect(
+    434,
+    64,
+    1050,
+    591
+  )
+  document.getElementById('toolbar')!.getBoundingClientRect = rect(
+    0,
+    879,
+    1920,
+    80
+  )
+
+  hideCaptions(document)
+  expect(document.getElementById('stage')).toHaveAttribute(ZOOM_ATTR)
+  showCaptions(document)
+  expect(document.getElementById('stage')).not.toHaveAttribute(ZOOM_ATTR)
 })
