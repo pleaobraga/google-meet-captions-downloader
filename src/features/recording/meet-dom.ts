@@ -71,8 +71,12 @@ export function isCaptionsOn(doc: Document): boolean {
   )
 }
 
+export function findLeaveCallButton(doc: Document): HTMLElement | null {
+  return findButton(doc, MEET_LABELS.leaveCall)
+}
+
 export function isInCall(doc: Document): boolean {
-  return findButton(doc, MEET_LABELS.leaveCall) !== null
+  return findLeaveCallButton(doc) !== null
 }
 
 export function getMeetingTitle(doc: Document): string {
