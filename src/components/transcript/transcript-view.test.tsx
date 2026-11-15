@@ -79,4 +79,31 @@ describe('TranscriptView', () => {
     render(<TranscriptView utterances={[]} sessions={[]} />)
     expect(screen.getByText('Nenhuma fala gravada ainda.')).toBeInTheDocument()
   })
+
+  test('mostra meu nome no lugar de Você', () => {
+    render(
+      <TranscriptView
+        utterances={[u('1', '2026-11-14T10:02:00-03:00', 'Você', 'oi')]}
+        sessions={[]}
+        myName="Maria"
+      />
+    )
+    expect(screen.getByText('Maria:')).toBeInTheDocument()
+    expect(screen.queryByText('Você:')).not.toBeInTheDocument()
+  })
+
+  test('destaca o termo buscado', () => {
+    const { container } = render(
+      <TranscriptView
+        utterances={[
+          u('1', '2026-11-14T10:02:00-03:00', 'Ana', 'a reunião é na sexta'),
+        ]}
+        sessions={[]}
+        highlight="reuniao"
+      />
+    )
+    const marks = container.querySelectorAll('mark')
+    expect(marks).toHaveLength(1)
+    expect(marks[0]).toHaveTextContent('reunião')
+  })
 })
