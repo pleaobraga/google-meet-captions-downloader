@@ -4,7 +4,29 @@ Extensão do Chrome (Manifest V3) que grava as legendas do Google Meet para cons
 
 ## O que vamos construir
 
-Os requisitos da nova versão estão em [docs/superpowers/specs/2026-11-14-melhorias-extensao-requisitos.md](docs/superpowers/specs/2026-11-14-melhorias-extensao-requisitos.md). Esse documento é a fonte da verdade sobre o comportamento esperado. Em caso de dúvida, ele vale mais que o código atual.
+Os requisitos da nova versão estão em [docs/superpowers/specs/2026-11-14-melhorias-extensao-requisitos.md](docs/superpowers/specs/2026-11-14-melhorias-extensao-requisitos.md). Esse documento é a fonte da verdade sobre o comportamento esperado. Em caso de dúvida, ele vale mais que o código atual e mais que os planos.
+
+## Planos de implementação
+
+O trabalho está dividido em cinco etapas, cada uma com o seu plano em [docs/superpowers/plans/](docs/superpowers/plans/). **Execute na ordem.** Cada etapa depende da anterior.
+
+| Etapa | Plano                                                                                                                     | O que entrega                                                                                       |
+| ----- | ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| 0     | [etapa-0-atualizar-pacotes](docs/superpowers/plans/2026-11-14-etapa-0-atualizar-pacotes.md)                               | Todos os pacotes nas últimas versões, com lint, testes e build funcionando                          |
+| 1     | [etapa-1-gravacao-completa](docs/superpowers/plans/2026-11-14-etapa-1-gravacao-completa.md)                               | Gravação completa das legendas, menu com liga/desliga, tela de reuniões mínima, modo de diagnóstico |
+| 2     | [etapa-2-tela-de-reunioes-e-configuracoes](docs/superpowers/plans/2026-11-14-etapa-2-tela-de-reunioes-e-configuracoes.md) | Busca, renomear, apagar, exportar, configurações, backup, parar de gravar uma reunião               |
+| 3     | [etapa-3-janela-flutuante](docs/superpowers/plans/2026-11-14-etapa-3-janela-flutuante.md)                                 | Janela flutuante de legendas (Picture-in-Picture)                                                   |
+| 4     | [etapa-4-qualidade](docs/superpowers/plans/2026-11-14-etapa-4-qualidade.md)                                               | Hook de commit, CI no GitHub, limpeza, README, verificação final                                    |
+
+Como trabalhar com os planos:
+
+- Antes de começar uma etapa, leia o plano inteiro dela e as seções "Como usar este plano" e "Restrições globais" da etapa 1, que valem para todas.
+- Siga as tarefas na ordem, marcando os checkboxes (`- [ ]` vira `- [x]`) conforme conclui cada passo. Assim dá para saber onde o trabalho parou.
+- Use exatamente os nomes de arquivos, funções e tipos dos planos. As tarefas seguintes dependem deles.
+- A numeração das tarefas é contínua entre as etapas 1 a 4 (1 a 34). A etapa 0 usa 0.1 a 0.5.
+- Cada etapa termina com uma verificação manual no Chrome, que precisa do usuário. Não comece a etapa seguinte antes dela.
+- Se um plano e o documento de requisitos discordarem, vale o documento de requisitos. Avise o usuário e corrija o plano.
+- Se algo no plano não funcionar como descrito (por exemplo, porque uma versão nova de um pacote mudou uma API), ajuste o código mantendo o comportamento e os testes do plano, e anote a diferença no próprio plano.
 
 ## O que fica e o que pode ser refeito
 
@@ -25,7 +47,9 @@ Os requisitos da nova versão estão em [docs/superpowers/specs/2026-11-14-melho
 - Tailwind CSS v4
 - shadcn/ui (estilo `new-york`, ícones `lucide-react`)
 - Vitest (jsdom) + Testing Library; Storybook para componentes
-- pnpm, Node 22.18.0
+- pnpm e Node nas versões indicadas no `package.json` (`engines` e `packageManager`)
+
+**Versões:** o projeto usa sempre as últimas versões estáveis de tudo. A etapa 0 atualiza todos os pacotes. Não fixe números de versão de memória: confira o que está instalado (`pnpm list --depth 0`) e leia a documentação da versão instalada antes de usar uma API.
 
 **Bibliotecas:** pode atualizar as bibliotecas atuais para versões mais novas e adicionar bibliotecas novas quando isso resolver o problema melhor do que código próprio. Antes de adicionar:
 

@@ -6,11 +6,15 @@
 
 **Arquitetura:** o content script na aba do Meet lê as legendas pelo HTML, converte os blocos em falas com um rastreador de "fala aberta e fechada" e salva direto em `chrome.storage.local`. O menu da extensão (popup) e a página de reuniões leem o mesmo storage e reagem a mudanças. O service worker só atualiza o selo do ícone. Toda a lógica de domínio fica em funções e classes puras, testadas sem navegador.
 
-**Stack:** React 19, TypeScript strict, Vite 7, Tailwind v4, shadcn/ui (new-york, lucide), Vitest (jsdom) + Testing Library, Storybook 9, pnpm, Chrome Manifest V3.
+**Stack:** React, TypeScript strict, Vite, Tailwind, shadcn/ui (new-york, lucide), Vitest (jsdom) + Testing Library, Storybook, pnpm, Chrome Manifest V3. Todos nas últimas versões, instaladas na etapa 0.
 
 **Spec:** [docs/superpowers/specs/2026-11-14-melhorias-extensao-requisitos.md](../specs/2026-11-14-melhorias-extensao-requisitos.md). Leia também o [CLAUDE.md](../../../CLAUDE.md).
 
 **Branch:** `feat/v2-melhorias` (já existe). Trabalhe nela.
+
+**Pré-requisito:** a [etapa 0](2026-11-14-etapa-0-atualizar-pacotes.md) (pacotes atualizados) precisa estar concluída.
+
+**Próximas etapas:** [etapa 2](2026-11-14-etapa-2-tela-de-reunioes-e-configuracoes.md), [etapa 3](2026-11-14-etapa-3-janela-flutuante.md) e [etapa 4](2026-11-14-etapa-4-qualidade.md). Os tipos e as funções criados aqui já incluem campos que só essas etapas usam (por exemplo `myName`, `autoDeleteDays`, `floatingFontSize` e o estado `stopped`). Crie-os como o plano manda, mesmo sem uso imediato.
 
 ---
 
@@ -31,7 +35,7 @@
 - Interface em português (pt-BR). Os textos exatos estão nas tarefas.
 - Componentes de interface: só shadcn/ui. Estilo: só classes Tailwind com os tokens do tema (`bg-background`, `text-muted-foreground`, etc.). Ícones: só `lucide-react`.
 - Nenhuma requisição de rede, nenhum dado sai do computador, nenhuma IA.
-- Permissões do manifest: **só** `storage` e `unlimitedStorage`.
+- Permissões do manifest nesta etapa: **só** `storage` e `unlimitedStorage`. A etapa 2 acrescenta `alarms`.
 - **Nunca** use, copie ou se baseie em `src/features/resize-video/` (é apagado na Tarefa 1).
 - Mantenha as ferramentas: ESLint, Prettier, Husky, lint-staged, Vitest, Storybook, TypeScript. Não desative regras nem hooks.
 - Constantes fixas (use estes valores exatos):
@@ -167,9 +171,11 @@ export function cn(...inputs: ClassValue[]) {
 
 Troque `"css": "src/index.css"` por `"css": "src/styles/index.css"`. Mantenha os aliases como estão (`@/components`, `@/components/ui`, `@/lib/utils`, `@/lib`, `@/hooks`).
 
-- [ ] **Passo 4: corrigir o Storybook (o `@storybook/addon-themes` foi removido do package.json)**
+- [ ] **Passo 4: apontar o Storybook para o CSS no lugar novo**
 
-Em `.storybook/main.ts`, remova a linha `'@storybook/addon-themes',` do array `addons`.
+A etapa 0 já tirou o `@storybook/addon-themes`. Confira que `.storybook/main.ts` não tem mais a linha `'@storybook/addon-themes',`. Se ainda tiver, remova.
+
+O CSS mudou de pasta no Passo 1, então o `preview.ts` precisa importar do caminho novo. Se a etapa 0 mudou outras partes desse arquivo por causa da versão nova do Storybook, mantenha essas mudanças e troque só a linha do `import` do CSS.
 
 Substitua `.storybook/preview.ts` por:
 
@@ -206,7 +212,6 @@ export default preview
 ```bash
 pnpm remove react-icons react-spinners markdown-to-jsx @storybook/addons
 pnpm install
-pnpm up
 ```
 
 Mantenha `@mdx-js/react` (o Storybook usa) e `next-themes` (o componente `sonner` do shadcn usa).
@@ -265,7 +270,7 @@ createRoot(document.getElementById('root')!).render(
 
 - [ ] **Passo 9: reescrever `vite.config.ts`**
 
-Mantenha o bloco `test` existente, com duas mudanças: dê ao projeto jsdom o nome `unit` e defina o fuso horário. Troque o bloco `build` e remova `rootNamed` e `index.html`.
+Se a etapa 0 mudou nomes de opções por causa da versão nova do Vite (por exemplo `rollupOptions`), use os nomes que ficaram no arquivo depois dela. Mantenha o bloco `test` existente, com duas mudanças: dê ao projeto jsdom o nome `unit` e defina o fuso horário. Troque o bloco `build` e remova `rootNamed` e `index.html`.
 
 ```ts
 // dentro de defineConfig({...})
@@ -492,6 +497,10 @@ export const chromeFake = {
   tabs: {
     create: vi.fn(async () => ({})),
   },
+  alarms: {
+    create: vi.fn(async () => {}),
+    onAlarm: { addListener: vi.fn() },
+  },
 }
 
 export function installChromeFake() {
@@ -507,6 +516,8 @@ export function resetChromeFake() {
   chromeFake.runtime.onInstalled.addListener.mockClear()
   chromeFake.runtime.onStartup.addListener.mockClear()
   chromeFake.tabs.create.mockClear()
+  chromeFake.alarms.create.mockClear()
+  chromeFake.alarms.onAlarm.addListener.mockClear()
 }
 
 export function getStorageSnapshot(): Record<string, unknown> {
@@ -523,6 +534,18 @@ import { afterEach, beforeEach } from 'vitest'
 import { installChromeFake, resetChromeFake } from './src/test/chrome-fake'
 
 installChromeFake()
+
+// O jsdom não tem estes recursos, e os componentes do shadcn (Radix) precisam deles.
+class ResizeObserverStub {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+globalThis.ResizeObserver ??= ResizeObserverStub
+Element.prototype.scrollIntoView ??= () => {}
+Element.prototype.hasPointerCapture ??= () => false
+Element.prototype.setPointerCapture ??= () => {}
+Element.prototype.releasePointerCapture ??= () => {}
 
 beforeEach(() => {
   resetChromeFake()
@@ -591,6 +614,7 @@ export type Meeting = {
   sessions: Session[]
   utterances: Utterance[]
   legacy?: boolean
+  captionsOffByUser?: boolean
 }
 
 export type MeetingSummary = {
@@ -600,21 +624,34 @@ export type MeetingSummary = {
   customTitle?: string
   startedAt: number
   endedAt: number
+  durationMs: number
   utteranceCount: number
   legacy?: boolean
 }
 
+export type AutoDeleteDays = 0 | 30 | 90 | 180
+
 export type Settings = {
   enabled: boolean
   diagnostics: boolean
+  autoDeleteDays: AutoDeleteDays // 0 = nunca apagar (etapa 2)
+  myName: string // substitui "Você" nas transcrições (etapa 2)
+  floatingFontSize: number // tamanho da letra da janela flutuante, em px (etapa 3)
 }
 
 export const DEFAULT_SETTINGS: Settings = {
   enabled: true,
   diagnostics: false,
+  autoDeleteDays: 0,
+  myName: '',
+  floatingFontSize: 16,
 }
 
-export type LiveState = 'recording' | 'captions-off' | 'captions-unavailable'
+export type LiveState =
+  | 'recording'
+  | 'captions-off'
+  | 'captions-unavailable'
+  | 'stopped' // gravação parada só nesta reunião (etapa 2)
 
 export type LiveStatus = {
   meetingId: string | null
@@ -710,6 +747,7 @@ export function sameLocalDay(a: number, b: number): boolean {
 
 ```ts
 import { describe, expect, test, vi } from 'vitest'
+import { DEFAULT_SETTINGS } from './types'
 import type { DiagnosticLog, LiveStatus, Meeting } from './types'
 import {
   STORAGE_KEYS,
@@ -759,15 +797,18 @@ function live(overrides: Partial<LiveStatus> = {}): LiveStatus {
 
 describe('settings', () => {
   test('usa os valores padrão quando não há nada salvo', async () => {
-    expect(await getSettings()).toEqual({ enabled: true, diagnostics: false })
+    expect(await getSettings()).toEqual(DEFAULT_SETTINGS)
   })
 
   test('updateSettings mescla e salva', async () => {
     expect(await updateSettings({ diagnostics: true })).toEqual({
-      enabled: true,
+      ...DEFAULT_SETTINGS,
       diagnostics: true,
     })
-    expect(await getSettings()).toEqual({ enabled: true, diagnostics: true })
+    expect(await getSettings()).toEqual({
+      ...DEFAULT_SETTINGS,
+      diagnostics: true,
+    })
   })
 
   test('onSettingsChange avisa com as configurações completas', async () => {
@@ -775,7 +816,7 @@ describe('settings', () => {
     const unsubscribe = onSettingsChange(cb)
     await updateSettings({ enabled: false })
     await Promise.resolve()
-    expect(cb).toHaveBeenCalledWith({ enabled: false, diagnostics: false })
+    expect(cb).toHaveBeenCalledWith({ ...DEFAULT_SETTINGS, enabled: false })
     unsubscribe()
   })
 })
@@ -792,6 +833,7 @@ describe('meetings', () => {
         customTitle: undefined,
         startedAt: 1000,
         endedAt: 5000,
+        durationMs: 4000,
         utteranceCount: 1,
         legacy: undefined,
       },
@@ -936,6 +978,11 @@ export function summarizeMeeting(meeting: Meeting): MeetingSummary {
     customTitle: meeting.customTitle,
     startedAt: meeting.startedAt,
     endedAt: meeting.sessions.at(-1)?.endedAt ?? meeting.startedAt,
+    // Soma do tempo de cada sessão (R5.2): o intervalo entre sair e voltar não conta.
+    durationMs: meeting.sessions.reduce(
+      (total, session) => total + (session.endedAt - session.startedAt),
+      0
+    ),
     utteranceCount: meeting.utterances.length,
     legacy: meeting.legacy,
   }
@@ -1632,6 +1679,7 @@ function summary(startedAt: number, endedAt: number): MeetingSummary {
     title: '',
     startedAt,
     endedAt,
+    durationMs: endedAt - startedAt,
     utteranceCount: 3,
   }
 }
@@ -2001,6 +2049,7 @@ Atende R3.2 e R3.3, incluindo a correção do bug atual: depois que as legendas 
   - `class CaptionsAutostart`
   - `constructor(now: () => number)`
   - `reset(): void`
+  - `skip(): void`: marca como concluído sem clicar em nada. Usado quando eu já desliguei as legendas nesta reunião (R3.3)
   - `tick(doc: Document): void`
   - `get done(): boolean`
   - `AUTOSTART_RETRY_MS = 2_000`
@@ -2081,6 +2130,14 @@ describe('CaptionsAutostart', () => {
     now = 60_001
     autostart.tick(document)
     expect(autostart.done).toBe(true)
+  })
+
+  test('skip impede qualquer clique', () => {
+    renderOff()
+    autostart.skip()
+    autostart.tick(document)
+    expect(autostart.done).toBe(true)
+    expect(clicks).not.toHaveBeenCalled()
   })
 
   test('reset permite ligar de novo numa nova sessão', () => {
@@ -2450,6 +2507,7 @@ export class Recorder {
   get active(): boolean // em uma reunião (gravando ou bloqueado por outra aba)
   get blocked(): boolean // outra aba já grava esta reunião
   get code(): string | null
+  get captionsOffByUser(): boolean // eu desliguei as legendas nesta reunião (R3.3)
   join(code: string, title: string): Promise<void>
   observe(
     blocks: ObservedBlock[] | null,
@@ -2462,7 +2520,7 @@ export class Recorder {
 }
 ```
 
-**Estado interno:** `meeting: Meeting | null`, `persisted: boolean`, `tracker: CaptionTracker`, `lastSaveAt: number`, `saveTimer`, `heartbeatTimer`, `missingSince: number | null`, `state: LiveState`, `diagnostics: DiagnosticRecorder | null`, `blockedCode: string | null`.
+**Estado interno:** `meeting: Meeting | null`, `persisted: boolean`, `tracker: CaptionTracker`, `lastSaveAt: number`, `saveTimer`, `heartbeatTimer`, `missingSince: number | null`, `state: LiveState`, `diagnostics: DiagnosticRecorder | null`, `blockedCode: string | null`, `sawCaptionsOn: boolean` (volta a `false` em cada `join`).
 
 **Regras de `join(code, title)`:**
 
@@ -2479,9 +2537,9 @@ export class Recorder {
 2. `diagnostics?.record(blocks, region, captionsState, now)`.
 3. Com `blocks === null`:
    - `changed = tracker.sync([], now)`, porque a região sumiu e todas as falas fecham;
-   - se `captionsState === 'off'`: `state = 'captions-off'` e `missingSince = null`;
+   - se `captionsState === 'off'`: `state = 'captions-off'` e `missingSince = null`. Além disso, se `sawCaptionsOn` e `meeting.captionsOffByUser` ainda não for `true`, define `meeting.captionsOffByUser = true` e `changed = true`. A condição `sawCaptionsOn` evita marcar no começo da reunião, quando as legendas ainda não tinham sido ligadas;
    - senão: `missingSince ??= now`; se `now - missingSince >= UNAVAILABLE_AFTER_MS`, `state = 'captions-unavailable'`.
-4. Com blocos: `missingSince = null`, `state = 'recording'`, `changed = tracker.sync(blocks, now)`.
+4. Com blocos: `missingSince = null`, `state = 'recording'`, `sawCaptionsOn = true`, `changed = tracker.sync(blocks, now)`. Se `meeting.captionsOffByUser` for `true`, volta para `false` e `changed = true` (eu religuei as legendas).
 5. Se `changed`, chama `scheduleSave()`. Se `state` mudou, chama `void publishLive()`.
 
 **Regras de salvamento:**
@@ -2507,7 +2565,7 @@ export class Recorder {
 
 **`setTitle(title)`:** se houver `meeting` e `title` não vazio diferente do atual, atualiza `meeting.title` e chama `scheduleSave()` se `persisted`.
 
-**`get code()`:** `meeting?.code ?? blockedCode ?? null`. **`get active()`:** `meeting !== null || blockedCode !== null`. **`get blocked()`:** `blockedCode !== null`.
+**`get code()`:** `meeting?.code ?? blockedCode ?? null`. **`get active()`:** `meeting !== null || blockedCode !== null`. **`get blocked()`:** `blockedCode !== null`. **`get captionsOffByUser()`:** `meeting?.captionsOffByUser ?? false`.
 
 - [ ] **Passo 1: escrever os testes**
 
@@ -2710,6 +2768,23 @@ describe('Recorder', () => {
     expect((await getLiveStatus())?.state).toBe('captions-unavailable')
   })
 
+  test('lembra que eu desliguei as legendas nesta reunião', async () => {
+    const recorder = createRecorder()
+    await recorder.join(CODE, 'Daily')
+    recorder.observe(null, 'off', null)
+    expect(recorder.captionsOffByUser).toBe(false)
+    recorder.observe(blocks('oi'), 'on', null)
+    recorder.observe(null, 'off', null)
+    expect(recorder.captionsOffByUser).toBe(true)
+    await recorder.leave()
+
+    const again = createRecorder()
+    await again.join(CODE, 'Daily')
+    expect(again.captionsOffByUser).toBe(true)
+    again.observe(blocks('voltei'), 'on', null)
+    expect(again.captionsOffByUser).toBe(false)
+  })
+
   test('não grava se outra aba já grava a mesma reunião', async () => {
     await setLiveStatus({
       meetingId: null,
@@ -2754,7 +2829,7 @@ Esperado: FAIL.
 - [ ] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/recording/recorder.test.ts`
-Esperado: PASS (12 testes).
+Esperado: PASS (13 testes).
 
 - [ ] **Passo 5: commit**
 
@@ -2946,6 +3021,8 @@ async function evaluate() {
   if (!recorder.active && inCall && code) {
     autostart.reset()
     await recorder.join(code, getMeetingTitle(deps.doc))
+    // Eu já desliguei as legendas nesta reunião: não religa ao recarregar (R3.3).
+    if (recorder.captionsOffByUser) autostart.skip()
   }
   if (!recorder.active || recorder.blocked) return
 
@@ -3096,6 +3173,24 @@ describe('content controller', () => {
     expect((await getLiveStatus())?.state).toBe('captions-off')
   })
 
+  test('recarregar depois de desligar as legendas não religa', async () => {
+    goTo('/abc-defg-hij')
+    document.body.innerHTML = MEET_IN_CALL_EN
+    await start()
+    await vi.advanceTimersByTimeAsync(1_500)
+    document.body.innerHTML = MEET_CAPTIONS_OFF_EN
+    await vi.advanceTimersByTimeAsync(1_500)
+    await controller?.dispose()
+
+    const click = vi.fn()
+    document
+      .querySelector('[aria-label="Turn on captions (c)"]')!
+      .addEventListener('click', click)
+    await start()
+    await vi.advanceTimersByTimeAsync(5_000)
+    expect(click).not.toHaveBeenCalled()
+  })
+
   test('navegação sem recarregar: entra, sai e volta na mesma reunião', async () => {
     document.body.innerHTML = MEET_LANDING
     await start()
@@ -3204,7 +3299,7 @@ git commit -m "feat: wire recording into the Meet page"
 
 ### Tarefa 12: selo do ícone e service worker
 
-Atende R3.8.
+Atende R3.8 e o aviso no ícone do R1.9.
 
 **Arquivos:**
 
@@ -3214,22 +3309,34 @@ Atende R3.8.
 
 **Interfaces:**
 
-- Produz: `applyBadge(enabled: boolean): Promise<void>`.
+- Consome: `getSettings`, `getLiveStatus`, `onStorageKeysChange`, `STORAGE_KEYS` (Tarefa 2); `LiveStatus`.
+- Produz: `applyBadge(enabled: boolean, live: LiveStatus | undefined): Promise<void>`.
 
-**Regras de `applyBadge`:**
+**Regras de `applyBadge`** (a primeira que casar vale):
 
-- Ligada: `setBadgeText({ text: '' })` e `setTitle({ title: 'Meet Captions: ligada' })`.
-- Desligada: `setBadgeText({ text: 'OFF' })`, `setBadgeBackgroundColor({ color: '#6b7280' })` e `setTitle({ title: 'Meet Captions: desligada' })`.
+| Situação                                                  | `setBadgeText` | `setBadgeBackgroundColor` | `setTitle`                                          |
+| --------------------------------------------------------- | -------------- | ------------------------- | --------------------------------------------------- |
+| `enabled === false`                                       | `'OFF'`        | `'#6b7280'`               | `'Meet Captions: desligada'`                        |
+| `live?.state === 'captions-unavailable'`                  | `'!'`          | `'#dc2626'`               | `'Meet Captions: não foi possível ler as legendas'` |
+| `live?.state === 'recording'` e `live.meetingId !== null` | `'REC'`        | `'#dc2626'`               | `'Meet Captions: gravando'`                         |
+| qualquer outro caso                                       | `''`           | não chama                 | `'Meet Captions: ligada'`                           |
+
+Observação: o service worker não fica rodando o tempo todo, então o selo só é recalculado quando o storage muda ou o Chrome abre. Se a aba do Meet travar sem avisar, o selo `REC` pode ficar preso até a próxima mudança. `getLiveStatus()` já ignora status vencido, o que corrige o selo na primeira oportunidade. Não adicione a permissão `alarms` para resolver isso.
 
 **`src/entries/background.ts`** (código completo):
 
 ```ts
 import { applyBadge } from '@/features/extension-toggle/badge'
-import { getSettings, onSettingsChange } from '@/shared/storage'
+import {
+  STORAGE_KEYS,
+  getLiveStatus,
+  getSettings,
+  onStorageKeysChange,
+} from '@/shared/storage'
 
 async function syncBadge() {
-  const settings = await getSettings()
-  await applyBadge(settings.enabled)
+  const [settings, live] = await Promise.all([getSettings(), getLiveStatus()])
+  await applyBadge(settings.enabled, live)
 }
 
 chrome.runtime.onInstalled.addListener(() => {
@@ -3240,8 +3347,8 @@ chrome.runtime.onStartup.addListener(() => {
   void syncBadge()
 })
 
-onSettingsChange((settings) => {
-  void applyBadge(settings.enabled)
+onStorageKeysChange([STORAGE_KEYS.settings, STORAGE_KEYS.live], () => {
+  void syncBadge()
 })
 ```
 
@@ -3249,19 +3356,31 @@ onSettingsChange((settings) => {
 
 ```ts
 import { describe, expect, test } from 'vitest'
+import type { LiveStatus } from '@/shared/types'
 import { applyBadge } from './badge'
 
+const live: LiveStatus = {
+  meetingId: 'm1',
+  code: 'abc-defg-hij',
+  title: 'Daily',
+  since: 0,
+  heartbeatAt: 0,
+  state: 'recording',
+  utteranceCount: 1,
+  tabToken: 't',
+}
+
 describe('applyBadge', () => {
-  test('ligada: sem selo', async () => {
-    await applyBadge(true)
+  test('ligada e sem reunião: sem selo', async () => {
+    await applyBadge(true, undefined)
     expect(chrome.action.setBadgeText).toHaveBeenCalledWith({ text: '' })
     expect(chrome.action.setTitle).toHaveBeenCalledWith({
       title: 'Meet Captions: ligada',
     })
   })
 
-  test('desligada: selo OFF cinza', async () => {
-    await applyBadge(false)
+  test('desligada: selo OFF cinza, mesmo com status ao vivo', async () => {
+    await applyBadge(false, live)
     expect(chrome.action.setBadgeText).toHaveBeenCalledWith({ text: 'OFF' })
     expect(chrome.action.setBadgeBackgroundColor).toHaveBeenCalledWith({
       color: '#6b7280',
@@ -3269,6 +3388,32 @@ describe('applyBadge', () => {
     expect(chrome.action.setTitle).toHaveBeenCalledWith({
       title: 'Meet Captions: desligada',
     })
+  })
+
+  test('gravando: selo REC vermelho', async () => {
+    await applyBadge(true, live)
+    expect(chrome.action.setBadgeText).toHaveBeenCalledWith({ text: 'REC' })
+    expect(chrome.action.setBadgeBackgroundColor).toHaveBeenCalledWith({
+      color: '#dc2626',
+    })
+    expect(chrome.action.setTitle).toHaveBeenCalledWith({
+      title: 'Meet Captions: gravando',
+    })
+  })
+
+  test('falha ao ler as legendas: selo de alerta', async () => {
+    await applyBadge(true, { ...live, state: 'captions-unavailable' })
+    expect(chrome.action.setBadgeText).toHaveBeenCalledWith({ text: '!' })
+    expect(chrome.action.setTitle).toHaveBeenCalledWith({
+      title: 'Meet Captions: não foi possível ler as legendas',
+    })
+  })
+
+  test('aguardando a primeira fala ou legendas desligadas: sem selo', async () => {
+    await applyBadge(true, { ...live, meetingId: null })
+    expect(chrome.action.setBadgeText).toHaveBeenLastCalledWith({ text: '' })
+    await applyBadge(true, { ...live, state: 'captions-off' })
+    expect(chrome.action.setBadgeText).toHaveBeenLastCalledWith({ text: '' })
   })
 })
 ```
@@ -3283,13 +3428,13 @@ Esperado: FAIL.
 - [ ] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/extension-toggle/badge.test.ts`
-Esperado: PASS.
+Esperado: PASS (5 testes).
 
 - [ ] **Passo 5: commit**
 
 ```bash
 git add src/features/extension-toggle/badge.ts src/features/extension-toggle/badge.test.ts src/entries/background.ts
-git commit -m "feat: show extension on/off state on the toolbar icon"
+git commit -m "feat: show extension state on the toolbar icon"
 ```
 
 ---
@@ -3859,7 +4004,7 @@ Atende R5.1 a R5.3 e R5.5 (a lista e a leitura básica), R1.9 na página, R7.1 e
 **`MeetingList`:** `<ul>`. Cada item é um `<button>` com:
 
 - `displayTitle(m)`;
-- a linha `formatDateTime(m.startedAt) · formatDuration(m.endedAt - m.startedAt)`;
+- a linha `formatDateTime(m.startedAt) · formatDuration(m.durationMs)`. Use `durationMs` (soma das sessões), **não** `endedAt - startedAt`, que contaria o tempo fora da reunião;
 - `Badge` `Ao vivo` quando `m.id === liveMeetingId`;
 - `Badge` (variante `secondary`) `Formato antigo` quando `m.legacy`.
 
@@ -3894,6 +4039,7 @@ const meetings: MeetingSummary[] = [
     title: 'Daily do time',
     startedAt: at('2026-11-14T10:00:00-03:00'),
     endedAt: at('2026-11-14T10:32:00-03:00'),
+    durationMs: 32 * 60_000,
     utteranceCount: 5,
   },
   {
@@ -3902,6 +4048,7 @@ const meetings: MeetingSummary[] = [
     title: 'Reunião antiga',
     startedAt: at('2026-11-12T09:00:00-03:00'),
     endedAt: at('2026-11-12T09:00:00-03:00'),
+    durationMs: 0,
     utteranceCount: 1,
     legacy: true,
   },
@@ -4041,9 +4188,9 @@ Depois, em `chrome://extensions`, com o modo de desenvolvedor ativado: remova a 
 2. Entrar numa reunião com o Meet em **português**: as legendas ligam sozinhas e o menu mostra `Gravando: …` depois da primeira fala.
 3. Falar por mais de 1 minuto seguido. Depois, na página de reuniões, a fala aparece inteira, sem repetições.
 4. Desligar as legendas pelo botão do Meet: elas continuam desligadas e o menu mostra `Legendas desligadas · gravação pausada`. Religar: a gravação continua.
-5. Recarregar a aba no meio da reunião: na página de reuniões continua uma reunião só, com a marcação de saída e volta.
+5. Recarregar a aba no meio da reunião: na página de reuniões continua uma reunião só, com a marcação de saída e volta. Se as legendas estavam desligadas por mim antes de recarregar, elas continuam desligadas.
 6. Desligar a extensão pelo menu durante a reunião: aparecem as duas confirmações. Testar `Manter gravação` numa reunião e `Descartar` em outra.
-7. Com a extensão desligada, o ícone mostra `OFF` e entrar numa reunião não liga as legendas.
+7. Com a extensão desligada, o ícone mostra `OFF` e entrar numa reunião não liga as legendas. Com ela ligada, o ícone mostra `REC` enquanto grava.
 8. Repetir os itens 2 e 3 com o Meet em **inglês**.
 9. Ligar o `Modo de diagnóstico` na página de reuniões, participar de uma reunião e baixar o arquivo de diagnóstico. **Enviar esse arquivo para análise** (R8.4).
 10. Reuniões gravadas pela versão antiga aparecem na lista com o selo `Formato antigo`, depois de abrir qualquer página do Meet uma vez.
@@ -4054,8 +4201,8 @@ Para cada item que falhar, anote o que aconteceu. Se o problema for na leitura d
 
 ---
 
-## Fora desta etapa (fica para as próximas)
+## Depois desta etapa
 
-- **Etapa 2:** busca, renomear, apagar (uma, várias, anteriores a uma data), exportar `.md` e `.txt`, configurações com limpeza automática.
-- **Etapa 3:** janela flutuante (Picture-in-Picture) e esconder as legendas do Meet.
-- **Etapa 4:** CI no GitHub, README e revisão final de dependências.
+- [Etapa 2: tela de reuniões completa e configurações](2026-11-14-etapa-2-tela-de-reunioes-e-configuracoes.md)
+- [Etapa 3: janela flutuante de legendas](2026-11-14-etapa-3-janela-flutuante.md)
+- [Etapa 4: qualidade](2026-11-14-etapa-4-qualidade.md)
