@@ -107,7 +107,7 @@ export function splitHighlight(text: string, query: string): TextPart[] {
 }
 ```
 
-- [ ] **Passo 1: escrever os testes** (`src/features/meetings/search.test.ts`)
+- [x] **Passo 1: escrever os testes** (`src/features/meetings/search.test.ts`)
 
 ```ts
 import { describe, expect, test } from 'vitest'
@@ -208,19 +208,19 @@ test('normalizeText tira acentos e maiúsculas', () => {
 })
 ```
 
-- [ ] **Passo 2: rodar e confirmar que falha**
+- [x] **Passo 2: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/lib/text.test.ts src/features/meetings/search.test.ts`
 Esperado: FAIL.
 
-- [ ] **Passo 3: implementar** `text.ts` e `search.ts` seguindo as regras e o código acima.
+- [x] **Passo 3: implementar** `text.ts` e `search.ts` seguindo as regras e o código acima.
 
-- [ ] **Passo 4: rodar e confirmar que passa**
+- [x] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/lib/text.test.ts src/features/meetings/search.test.ts`
 Esperado: PASS.
 
-- [ ] **Passo 5: commit**
+- [x] **Passo 5: commit**
 
 ```bash
 git add src/lib/text.ts src/lib/text.test.ts src/features/meetings/search.ts src/features/meetings/search.test.ts
@@ -260,7 +260,7 @@ Atende R7.3 (a lógica) e prepara R5.7 e a exportação. Refatora os componentes
   - o nome mostrado é `displaySpeaker(u.speaker, myName ?? '')`;
   - o texto é renderizado com `splitHighlight(u.text, highlight ?? '')`. Pedaços com `match: true` vão dentro de `<mark className="rounded-sm bg-yellow-500/40 text-foreground">`. Os outros são texto puro dentro do mesmo `<span>` de antes. Sem `highlight`, o HTML fica igual ao da Tarefa 13.
 
-- [ ] **Passo 1: escrever os testes**
+- [x] **Passo 1: escrever os testes**
 
 `src/lib/speaker.test.ts`:
 
@@ -381,19 +381,19 @@ test('destaca o termo buscado', () => {
 })
 ```
 
-- [ ] **Passo 2: rodar e confirmar que falha**
+- [x] **Passo 2: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/lib/speaker.test.ts src/components/transcript`
 Esperado: FAIL nos testes novos.
 
-- [ ] **Passo 3: implementar** os dois arquivos novos e modificar os dois componentes.
+- [x] **Passo 3: implementar** os dois arquivos novos e modificar os dois componentes.
 
-- [ ] **Passo 4: rodar e confirmar que passa**
+- [x] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/lib/speaker.test.ts src/components/transcript`
 Esperado: PASS, incluindo os testes antigos da Tarefa 13.
 
-- [ ] **Passo 5: commit**
+- [x] **Passo 5: commit**
 
 ```bash
 git add src/lib/speaker.ts src/lib/speaker.test.ts src/components/transcript
@@ -461,7 +461,7 @@ Participantes: Pedro, Ana
 - O nome de cada fala passa por `displaySpeaker(speaker, myName)`.
 - `exportFilename`: `` `${formatIsoDate(meeting.startedAt)} ${título limpo}.${format}` ``. Para limpar o título: remover os caracteres `\ / : * ? " < > |` e os de controle (`/[\\/:*?"<>|\u0000-\u001f]/g`), trocar sequências de espaços por um espaço, `trim()` e cortar em 100 caracteres. Se sobrar vazio, usar `Reunião`.
 
-- [ ] **Passo 1: escrever os testes**
+- [x] **Passo 1: escrever os testes**
 
 ```ts
 import { describe, expect, test } from 'vitest'
@@ -606,19 +606,19 @@ test('formatDate e formatIsoDate', () => {
 })
 ```
 
-- [ ] **Passo 2: rodar e confirmar que falha**
+- [x] **Passo 2: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/features/meetings/export.test.ts src/lib/format.test.ts`
 Esperado: FAIL.
 
-- [ ] **Passo 3: implementar.** Monte uma lista de blocos (cabeçalho, cada fala, cada marcador), junte com `'\n\n'` e termine com `'\n'`. No `.txt`, as quatro linhas do cabeçalho formam um bloco só.
+- [x] **Passo 3: implementar.** Monte uma lista de blocos (cabeçalho, cada fala, cada marcador), junte com `'\n\n'` e termine com `'\n'`. No `.txt`, as quatro linhas do cabeçalho formam um bloco só.
 
-- [ ] **Passo 4: rodar e confirmar que passa**
+- [x] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/meetings/export.test.ts src/lib/format.test.ts`
 Esperado: PASS.
 
-- [ ] **Passo 5: commit**
+- [x] **Passo 5: commit**
 
 ```bash
 git add src/features/meetings/export.ts src/features/meetings/export.test.ts src/lib/format.ts src/lib/format.test.ts
@@ -657,7 +657,7 @@ if (stored?.customTitle) m.customTitle = stored.customTitle
 else delete m.customTitle
 ```
 
-- [ ] **Passo 1: escrever os testes**
+- [x] **Passo 1: escrever os testes**
 
 Acrescente em `src/shared/storage.test.ts` (importe as três funções novas):
 
@@ -718,19 +718,19 @@ test('o título que eu dei sobrevive aos salvamentos da gravação', async () =>
 })
 ```
 
-- [ ] **Passo 2: rodar e confirmar que falha**
+- [x] **Passo 2: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/shared/storage.test.ts src/features/recording/recorder.test.ts`
 Esperado: FAIL nos testes novos.
 
-- [ ] **Passo 3: implementar.**
+- [x] **Passo 3: implementar.**
 
-- [ ] **Passo 4: rodar e confirmar que passa**
+- [x] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/shared src/features/recording`
 Esperado: PASS em tudo, incluindo os testes antigos.
 
-- [ ] **Passo 5: commit**
+- [x] **Passo 5: commit**
 
 ```bash
 git add src/shared/storage.ts src/shared/storage.test.ts src/features/recording/recorder.ts src/features/recording/recorder.test.ts
@@ -779,7 +779,7 @@ type MeetingDetailProps = {
 5. **Busca na reunião:** `Input` com `aria-label="Buscar nesta reunião"` e `placeholder="Buscar nesta reunião"`, começando com `initialQuery ?? ''`. Ao lado, quando a busca não está vazia, a contagem (soma de `countMatches` em todas as falas): `Nenhuma ocorrência`, `1 ocorrência` ou `{n} ocorrências`.
 6. **Transcrição:** `<TranscriptView utterances sessions myName={myName} highlight={busca} />`.
 
-- [ ] **Passo 1: escrever os testes**
+- [x] **Passo 1: escrever os testes**
 
 ```tsx
 import { render, screen } from '@testing-library/react'
@@ -912,19 +912,19 @@ describe('MeetingDetail', () => {
 })
 ```
 
-- [ ] **Passo 2: rodar e confirmar que falha**
+- [x] **Passo 2: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/features/meetings/meeting-detail.test.tsx`
 Esperado: FAIL.
 
-- [ ] **Passo 3: implementar** `meeting-detail.tsx`. O teste `MeetingsApp` da Tarefa 15 vai quebrar por causa das props novas. Ele é consertado na Tarefa 22. Por enquanto, em `meetings-app.tsx`, passe `isLive`, `myName=""` e funções vazias para o projeto compilar.
+- [x] **Passo 3: implementar** `meeting-detail.tsx`. O teste `MeetingsApp` da Tarefa 15 vai quebrar por causa das props novas. Ele é consertado na Tarefa 22. Por enquanto, em `meetings-app.tsx`, passe `isLive`, `myName=""` e funções vazias para o projeto compilar.
 
-- [ ] **Passo 4: rodar e confirmar que passa**
+- [x] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/meetings`
 Esperado: PASS.
 
-- [ ] **Passo 5: commit**
+- [x] **Passo 5: commit**
 
 ```bash
 git add src/features/meetings src/components/ui package.json pnpm-lock.yaml
@@ -967,7 +967,7 @@ Atende R5.6, R5.9a, R5.9b e R5.9c, e liga tudo na página.
   - `DeleteBeforeDialog` sempre visível, usando `deleteMeetings`;
   - `MeetingDetail` recebe: `key={meeting.id}`, `isLive={meeting.id === live?.meetingId}`, `myName={settings.myName}`, `initialQuery={busca geral}`, `onRename={(t) => renameMeeting(meeting.id, t)}`, `onDelete={() => deleteMeetings([meeting.id])}`, `onDownload={(f) => downloadTextFile(exportFilename(meeting, f), buildExport(meeting, f, settings.myName), f === 'md' ? 'text/markdown' : 'text/plain')}`.
 
-- [ ] **Passo 1: escrever os testes**
+- [x] **Passo 1: escrever os testes**
 
 `src/features/meetings/bulk-delete.test.ts`:
 
@@ -1142,19 +1142,19 @@ test('renomear pela tela grava no storage', async () => {
 })
 ```
 
-- [ ] **Passo 2: rodar e confirmar que falha**
+- [x] **Passo 2: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/features/meetings`
 Esperado: FAIL nos testes novos.
 
-- [ ] **Passo 3: implementar.**
+- [x] **Passo 3: implementar.**
 
-- [ ] **Passo 4: rodar e confirmar que passa**
+- [x] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/meetings`
 Esperado: PASS.
 
-- [ ] **Passo 5: commit**
+- [x] **Passo 5: commit**
 
 ```bash
 git add src/features/meetings
@@ -1208,7 +1208,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 
 e chamar `scheduleRetention()` dentro dos listeners de `onInstalled` e `onStartup` que já existem.
 
-- [ ] **Passo 1: escrever os testes**
+- [x] **Passo 1: escrever os testes**
 
 ```ts
 import { describe, expect, test } from 'vitest'
@@ -1320,19 +1320,19 @@ describe('runRetention', () => {
 })
 ```
 
-- [ ] **Passo 2: rodar e confirmar que falha**
+- [x] **Passo 2: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/features/retention`
 Esperado: FAIL.
 
-- [ ] **Passo 3: implementar** `retention.ts`, e modificar `background.ts` e `manifest.json`.
+- [x] **Passo 3: implementar** `retention.ts`, e modificar `background.ts` e `manifest.json`.
 
-- [ ] **Passo 4: rodar e confirmar que passa**
+- [x] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/retention && pnpm build`
 Esperado: PASS e build sem erro.
 
-- [ ] **Passo 5: commit**
+- [x] **Passo 5: commit**
 
 ```bash
 git add src/features/retention src/entries/background.ts public/manifest.json
@@ -1381,7 +1381,7 @@ export function importBackup(
   - alguma reunião não tiver `id` do tipo string, `startedAt` do tipo number, `sessions` array e `utterances` array.
 - `importBackup`: para cada reunião, se `getMeeting(id)` já existir, conta em `skipped` e **não altera** a que existe. Senão, `saveMeeting` e conta em `imported`.
 
-- [ ] **Passo 1: escrever os testes**
+- [x] **Passo 1: escrever os testes**
 
 ```ts
 import { describe, expect, test } from 'vitest'
@@ -1482,19 +1482,19 @@ describe('backup', () => {
 })
 ```
 
-- [ ] **Passo 2: rodar e confirmar que falha**
+- [x] **Passo 2: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/features/backup`
 Esperado: FAIL.
 
-- [ ] **Passo 3: implementar.** Em `parseBackup`, trate o resultado do `JSON.parse` como `unknown` e valide campo a campo, sem `any`.
+- [x] **Passo 3: implementar.** Em `parseBackup`, trate o resultado do `JSON.parse` como `unknown` e valide campo a campo, sem `any`.
 
-- [ ] **Passo 4: rodar e confirmar que passa**
+- [x] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/backup`
 Esperado: PASS.
 
-- [ ] **Passo 5: commit**
+- [x] **Passo 5: commit**
 
 ```bash
 git add src/features/backup
@@ -1553,7 +1553,7 @@ Atende R5.11, R7.1 a R7.4 e R8.5 na interface.
 4. **`Modo de diagnóstico`**
    - O `DiagnosticsPanel`, com `enabled={settings.diagnostics}`, `onToggle`, `logs={useDiagnostics()}`, `onDownload` (igual ao da Tarefa 15) e `onDelete={deleteDiagnostics}`.
 
-- [ ] **Passo 1: escrever os testes**
+- [x] **Passo 1: escrever os testes**
 
 ```tsx
 import { render, screen, waitFor } from '@testing-library/react'
@@ -1675,19 +1675,19 @@ if (!File.prototype.text) {
 }
 ```
 
-- [ ] **Passo 2: rodar e confirmar que falha**
+- [x] **Passo 2: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/features/settings`
 Esperado: FAIL.
 
-- [ ] **Passo 3: implementar** o `SettingsDialog` e as mudanças no `DiagnosticsPanel` e no `MeetingsApp`.
+- [x] **Passo 3: implementar** o `SettingsDialog` e as mudanças no `DiagnosticsPanel` e no `MeetingsApp`.
 
-- [ ] **Passo 4: rodar e confirmar que passa**
+- [x] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/settings src/features/meetings`
 Esperado: PASS.
 
-- [ ] **Passo 5: commit**
+- [x] **Passo 5: commit**
 
 ```bash
 git add src/features/settings src/features/meetings vitest.setup.ts
@@ -1799,7 +1799,7 @@ type StopRecordingButtonProps = {
 
 **`PopupApp`:** entre o `LiveStatusLine` e o botão `Abrir reuniões salvas`, só com a extensão ligada: `<StopRecordingButton live={live} onStop={({ discard }) => stopRecordingThisMeeting({ code: live.code, meetingId: live.meetingId, discard })} onResume={() => resumeRecording(live.code)} />`.
 
-- [ ] **Passo 1: escrever os testes**
+- [x] **Passo 1: escrever os testes**
 
 Acrescente em `storage.test.ts`:
 
@@ -2047,19 +2047,19 @@ test('gravação parada', () => {
 })
 ```
 
-- [ ] **Passo 2: rodar e confirmar que falha**
+- [x] **Passo 2: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit`
 Esperado: FAIL nos testes novos.
 
-- [ ] **Passo 3: implementar** tudo o que a tarefa lista.
+- [x] **Passo 3: implementar** tudo o que a tarefa lista.
 
-- [ ] **Passo 4: rodar e confirmar que passa**
+- [x] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit && pnpm lint && pnpm build`
 Esperado: PASS, lint e build sem erro.
 
-- [ ] **Passo 5: commit**
+- [x] **Passo 5: commit**
 
 ```bash
 git add src
