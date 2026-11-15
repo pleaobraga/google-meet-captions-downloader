@@ -12,35 +12,24 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Separator } from '@/components/ui/separator'
+import { Toaster } from '@/components/ui/sonner'
 import { useLiveStatus } from '@/features/extension-toggle/use-live-status'
+import { SettingsDialog } from '@/features/settings/settings-dialog'
 import { useSettings } from '@/features/extension-toggle/use-settings'
 import { downloadTextFile } from '@/lib/download'
-import { deleteMeetings, getDiagnostics, renameMeeting } from '@/shared/storage'
+import { deleteMeetings, renameMeeting } from '@/shared/storage'
 import type { Meeting } from '@/shared/types'
 import { pluralMeetings } from './bulk-delete'
 import { DeleteBeforeDialog } from './delete-before-dialog'
-import { DiagnosticsPanel } from './diagnostics-panel'
 import { buildExport, exportFilename, type ExportFormat } from './export'
 import { LiveBanner } from './live-banner'
 import { MeetingDetail } from './meeting-detail'
 import { MeetingList } from './meeting-list'
 import { searchMeetingIds } from './search'
-import { useDiagnostics } from './use-diagnostics'
 import { useMeeting } from './use-meeting'
 import { useMeetings } from './use-meetings'
 
 const SEARCH_DEBOUNCE_MS = 200
-
-async function downloadDiagnostics(meetingId: string) {
-  const log = await getDiagnostics(meetingId)
-  if (!log) return
-  downloadTextFile(
-    `diagnostico-${log.code}-${log.startedAt}.json`,
-    JSON.stringify(log, null, 2),
-    'application/json'
-  )
-}
 
 function downloadMeeting(
   meeting: Meeting,
@@ -85,8 +74,7 @@ function useSearchResults(query: string, version: unknown): Set<string> | null {
 export function MeetingsApp() {
   const meetings = useMeetings()
   const live = useLiveStatus()
-  const { settings, update } = useSettings()
-  const logs = useDiagnostics()
+  const { settings } = useSettings()
   const [chosenId, setChosenId] = useState<string | null>(null)
   const [query, setQuery] = useState('')
   const [selection, setSelection] = useState<Set<string>>(new Set())
@@ -123,7 +111,10 @@ export function MeetingsApp() {
   return (
     <div className="bg-background text-foreground flex h-screen">
       <aside className="flex w-80 flex-col border-r">
-        <h1 className="px-4 pt-3 pb-2 text-lg font-semibold">Reuniões</h1>
+        <div className="flex items-center justify-between px-4 pt-3 pb-2">
+          <h1 className="text-lg font-semibold">Reuniões</h1>
+          <SettingsDialog />
+        </div>
         <div className="px-4 pb-2">
           <Input
             aria-label="Buscar em todas as reuniões"
@@ -165,17 +156,6 @@ export function MeetingsApp() {
             />
           )}
         </ScrollArea>
-        <Separator />
-        <div className="p-4">
-          {settings && (
-            <DiagnosticsPanel
-              enabled={settings.diagnostics}
-              onToggle={(diagnostics) => void update({ diagnostics })}
-              logs={logs}
-              onDownload={(id) => void downloadDiagnostics(id)}
-            />
-          )}
-        </div>
       </aside>
 
       <main className="flex min-w-0 flex-1 flex-col gap-4 p-6">
@@ -222,6 +202,7 @@ export function MeetingsApp() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <Toaster />
     </div>
   )
 }

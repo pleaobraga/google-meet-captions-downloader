@@ -1,4 +1,4 @@
-import { Download } from 'lucide-react'
+import { Download, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { formatDateTime } from '@/lib/format'
@@ -9,6 +9,7 @@ type DiagnosticsPanelProps = {
   onToggle: (enabled: boolean) => void
   logs: DiagnosticSummary[]
   onDownload: (meetingId: string) => void
+  onDelete: (meetingId: string) => void
 }
 
 export function DiagnosticsPanel({
@@ -16,6 +17,7 @@ export function DiagnosticsPanel({
   onToggle,
   logs,
   onDownload,
+  onDelete,
 }: DiagnosticsPanelProps) {
   return (
     <section className="flex flex-col gap-3">
@@ -52,6 +54,14 @@ export function DiagnosticsPanel({
               >
                 <Download />
                 Baixar
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                aria-label="Apagar diagnóstico"
+                onClick={() => onDelete(log.meetingId)}
+              >
+                <Trash2 />
               </Button>
             </li>
           ))}
