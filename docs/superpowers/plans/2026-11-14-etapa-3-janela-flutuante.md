@@ -96,7 +96,7 @@ function syncStore(status: FloatingStatus) {
 
 O `status` passado é: `'stopped'` quando a gravação desta reunião está parada (Tarefa 26); `'idle'` quando a extensão está desligada, não há chamada ou a aba está bloqueada por outra; senão, `'recording'` (o `syncStore` troca pelo estado real do recorder).
 
-- [ ] **Passo 1: escrever os testes**
+- [x] **Passo 1: escrever os testes**
 
 `captions-store.test.ts`:
 
@@ -170,19 +170,19 @@ test('a store fica ociosa fora de reunião', async () => {
 })
 ```
 
-- [ ] **Passo 2: rodar e confirmar que falha**
+- [x] **Passo 2: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/features/floating-captions src/features/recording`
 Esperado: FAIL nos testes novos.
 
-- [ ] **Passo 3: implementar.**
+- [x] **Passo 3: implementar.**
 
-- [ ] **Passo 4: rodar e confirmar que passa**
+- [x] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/floating-captions src/features/recording`
 Esperado: PASS.
 
-- [ ] **Passo 5: commit**
+- [x] **Passo 5: commit**
 
 ```bash
 git add src/features/floating-captions src/features/recording
@@ -238,7 +238,7 @@ Atende R4.4 a R4.6 e R4.9 a R4.11.
 
 Leia a store com `useSyncExternalStore(store.subscribe, store.getSnapshot)`. Passe ao `useStickToBottom` uma dependência que mude a cada atualização das falas, por exemplo o próprio snapshot.
 
-- [ ] **Passo 1: escrever os testes**
+- [x] **Passo 1: escrever os testes**
 
 `use-stick-to-bottom.test.ts`:
 
@@ -388,19 +388,19 @@ describe('FloatingCaptions', () => {
 })
 ```
 
-- [ ] **Passo 2: rodar e confirmar que falha**
+- [x] **Passo 2: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/features/floating-captions`
 Esperado: FAIL.
 
-- [ ] **Passo 3: implementar** o hook e o componente. Crie a story com os estados `Aguardando`, `ComFalas` e `LegendasDesligadas`, usando uma store criada na própria story.
+- [x] **Passo 3: implementar** o hook e o componente. Crie a story com os estados `Aguardando`, `ComFalas` e `LegendasDesligadas`, usando uma store criada na própria story.
 
-- [ ] **Passo 4: rodar e confirmar que passa**
+- [x] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/floating-captions`
 Esperado: PASS.
 
-- [ ] **Passo 5: commit**
+- [x] **Passo 5: commit**
 
 ```bash
 git add src/features/floating-captions
@@ -419,7 +419,7 @@ Atende R4.1 a R4.3 e R4.8.
 - Modificar: `src/features/recording/meet-dom.ts`, `src/features/recording/content-controller.ts`, `src/entries/content-script.ts`, `vite.content.config.ts`
 - Teste: `src/features/floating-captions/meet-button.test.ts`, `hide-captions.test.ts`; acrescentar em `content-controller.test.ts`
 
-- [ ] **Passo 1: checagem manual da API (antes de escrever código)**
+- [ ] **Passo 1: checagem manual da API (antes de escrever código)** _(pendente: precisa do usuário)_
 
 Peça ao usuário para abrir uma reunião no Meet, abrir o DevTools (F12), ir na aba Console, trocar o contexto de `top` para o da extensão (o seletor ao lado do filtro, opção `Google Meet Captions Downloader`) e rodar:
 
@@ -429,7 +429,7 @@ Peça ao usuário para abrir uma reunião no Meet, abrir o DevTools (F12), ir na
 
 Esperado: `true`. Se der `false`, **pare aqui e avise o usuário**: a API não está disponível para o content script nesta versão do Chrome, e a abordagem precisa ser revista com ele.
 
-- [ ] **Passo 2: tipos da API** (`src/features/floating-captions/pip.d.ts`)
+- [x] **Passo 2: tipos da API** (`src/features/floating-captions/pip.d.ts`)
 
 ```ts
 export {}
@@ -449,7 +449,7 @@ declare global {
 }
 ```
 
-- [ ] **Passo 3: ajustar o build do content script** (`vite.content.config.ts`)
+- [x] **Passo 3: ajustar o build do content script** (`vite.content.config.ts`)
 
 O content script passa a incluir React e o CSS do Tailwind. Acrescente os plugins e a definição de `process.env.NODE_ENV`. Sem essa definição, o React falha no navegador com `process is not defined`, porque o modo biblioteca do Vite não a cria sozinho.
 
@@ -464,7 +464,7 @@ export default defineConfig({
 })
 ```
 
-- [ ] **Passo 4: escrever os testes do botão e de esconder as legendas**
+- [x] **Passo 4: escrever os testes do botão e de esconder as legendas**
 
 **Interfaces desta parte:**
 
@@ -601,12 +601,12 @@ test('mostrar desfaz tudo', () => {
 })
 ```
 
-- [ ] **Passo 5: rodar e confirmar que falha, implementar e confirmar que passa**
+- [x] **Passo 5: rodar e confirmar que falha, implementar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/floating-captions`
 Esperado: primeiro FAIL; depois de implementar `meet-button.ts`, `hide-captions.ts` e `findCaptionsToggleButton`, PASS.
 
-- [ ] **Passo 6: abrir a janela** (`src/features/floating-captions/open-floating-window.tsx`, código completo)
+- [x] **Passo 6: abrir a janela** (`src/features/floating-captions/open-floating-window.tsx`, código completo)
 
 ```tsx
 import { StrictMode } from 'react'
@@ -686,7 +686,7 @@ export async function openFloatingWindow(options: {
 
 Este arquivo não tem teste de unidade, porque o jsdom não tem a API. Ele é conferido no Passo 10.
 
-- [ ] **Passo 7: ligar no controller**
+- [x] **Passo 7: ligar no controller**
 
 `ControllerDeps` ganha um campo **opcional**:
 
@@ -802,12 +802,12 @@ describe('janela flutuante', () => {
 })
 ```
 
-- [ ] **Passo 8: rodar tudo**
+- [x] **Passo 8: rodar tudo**
 
 Run: `pnpm vitest run --project unit && pnpm lint && pnpm build`
 Esperado: PASS, lint e build sem erro. Confira também: `grep -c "^import " dist/content-script.js` deve dar `0`.
 
-- [ ] **Passo 9: commit**
+- [x] **Passo 9: commit**
 
 ```bash
 git add src vite.content.config.ts
