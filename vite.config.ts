@@ -1,16 +1,13 @@
 /// <reference types="vitest/config" />
 import tailwindcss from '@tailwindcss/vite'
-import react from '@vitejs/plugin-react-swc'
+import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin'
+import { playwright } from '@vitest/browser-playwright'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-const dirname =
-  typeof __dirname !== 'undefined'
-    ? __dirname
-    : path.dirname(fileURLToPath(import.meta.url))
+const dirname = import.meta.dirname
 const rootNamed = new Set(['background', 'save-caption-script'])
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
@@ -18,17 +15,17 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': path.resolve(dirname, './src'),
     },
   },
   build: {
     sourcemap: true,
     rollupOptions: {
       input: {
-        main: path.resolve(__dirname, 'index.html'),
-        background: path.resolve(__dirname, 'src/entries/background.ts'),
+        main: path.resolve(dirname, 'index.html'),
+        background: path.resolve(dirname, 'src/entries/background.ts'),
         'save-caption-script': path.resolve(
-          __dirname,
+          dirname,
           'src/scripts/save-caption-script.ts'
         ),
       },
@@ -59,14 +56,13 @@ export default defineConfig({
           browser: {
             enabled: true,
             headless: true,
-            provider: 'playwright',
+            provider: playwright(),
             instances: [
               {
                 browser: 'chromium',
               },
             ],
           },
-          setupFiles: ['.storybook/vitest.setup.ts'],
         },
       },
       {

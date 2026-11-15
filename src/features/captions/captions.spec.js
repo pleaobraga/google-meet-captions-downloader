@@ -108,7 +108,7 @@ describe('getPastTranscriptions', () => {
   }
   beforeEach(() => {
     Object.keys(store).forEach((k) => delete store[k])
-    globalThis.localStorage = ls
+    vi.stubGlobal('localStorage', ls)
   })
 
   test('collects only prefix keys, parses payload, derives timestamp from key', () => {
