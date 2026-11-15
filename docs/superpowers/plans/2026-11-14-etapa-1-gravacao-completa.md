@@ -148,7 +148,7 @@ src/
 
 - Produz: `installChromeFake()`, `resetChromeFake()`, `getStorageSnapshot()` e `chromeFake` em `src/test/chrome-fake.ts`, instalados automaticamente em todos os testes de unidade.
 
-- [ ] **Passo 1: mover o CSS e apagar o código antigo**
+- [x] **Passo 1: mover o CSS e apagar o código antigo**
 
 ```bash
 mkdir -p src/styles
@@ -156,7 +156,7 @@ git mv src/ui/index.css src/styles/index.css
 git rm -r -q src/ui src/features/captions src/features/resize-video src/scripts src/constants.ts src/entries/main.tsx index.html
 ```
 
-- [ ] **Passo 2: deixar `src/lib/utils.ts` só com o `cn`**
+- [x] **Passo 2: deixar `src/lib/utils.ts` só com o `cn`**
 
 ```ts
 import { clsx, type ClassValue } from 'clsx'
@@ -167,11 +167,11 @@ export function cn(...inputs: ClassValue[]) {
 }
 ```
 
-- [ ] **Passo 3: corrigir o `components.json`**
+- [x] **Passo 3: corrigir o `components.json`**
 
 Troque `"css": "src/index.css"` por `"css": "src/styles/index.css"`. Mantenha os aliases como estão (`@/components`, `@/components/ui`, `@/lib/utils`, `@/lib`, `@/hooks`).
 
-- [ ] **Passo 4: apontar o Storybook para o CSS no lugar novo**
+- [x] **Passo 4: apontar o Storybook para o CSS no lugar novo**
 
 A etapa 0 já tirou o `@storybook/addon-themes`. Confira que `.storybook/main.ts` não tem mais a linha `'@storybook/addon-themes',`. Se ainda tiver, remova.
 
@@ -207,7 +207,7 @@ const preview: Preview = {
 export default preview
 ```
 
-- [ ] **Passo 5: ajustar dependências**
+- [x] **Passo 5: ajustar dependências**
 
 ```bash
 pnpm remove react-icons react-spinners markdown-to-jsx @storybook/addons
@@ -216,7 +216,7 @@ pnpm install
 
 Mantenha `@mdx-js/react` (o Storybook usa) e `next-themes` (o componente `sonner` do shadcn usa).
 
-- [ ] **Passo 6: adicionar os componentes do shadcn**
+- [x] **Passo 6: adicionar os componentes do shadcn**
 
 ```bash
 pnpm dlx shadcn@latest add button switch alert-dialog badge scroll-area separator sonner
@@ -224,7 +224,7 @@ pnpm dlx shadcn@latest add button switch alert-dialog badge scroll-area separato
 
 Esperado: os arquivos aparecem em `src/components/ui/`. Se o CLI perguntar se pode sobrescrever `src/styles/index.css`, responda **não**. Confira com `git diff src/styles/index.css`: o arquivo não pode ter perdido as variáveis de tema existentes.
 
-- [ ] **Passo 7: criar as páginas HTML**
+- [x] **Passo 7: criar as páginas HTML**
 
 `popup.html`:
 
@@ -245,7 +245,7 @@ Esperado: os arquivos aparecem em `src/components/ui/`. Se o CLI perguntar se po
 
 `meetings.html`: igual, com `<title>Reuniões · Meet Captions</title>` e `src="/src/entries/meetings.tsx"`.
 
-- [ ] **Passo 8: criar entradas provisórias** (as tarefas 11, 12, 14 e 15 substituem)
+- [x] **Passo 8: criar entradas provisórias** (as tarefas 11, 12, 14 e 15 substituem)
 
 `src/entries/popup.tsx`:
 
@@ -268,7 +268,7 @@ createRoot(document.getElementById('root')!).render(
 
 `src/entries/content-script.ts`: `export {}`.
 
-- [ ] **Passo 9: reescrever `vite.config.ts`**
+- [x] **Passo 9: reescrever `vite.config.ts`**
 
 Se a etapa 0 mudou nomes de opções por causa da versão nova do Vite (por exemplo `rollupOptions`), use os nomes que ficaram no arquivo depois dela. Mantenha o bloco `test` existente, com duas mudanças: dê ao projeto jsdom o nome `unit` e defina o fuso horário. Troque o bloco `build` e remova `rootNamed` e `index.html`.
 
@@ -307,7 +307,7 @@ No projeto jsdom dentro de `test.projects`:
 },
 ```
 
-- [ ] **Passo 10: criar `vite.content.config.ts`**
+- [x] **Passo 10: criar `vite.content.config.ts`**
 
 O content script precisa ser um arquivo único, sem `import`, porque o Chrome carrega content scripts como scripts clássicos. Por isso ele tem um build próprio no formato IIFE.
 
@@ -341,7 +341,7 @@ Em `package.json`, troque o script `build` por:
 "build": "tsc -b && vite build && vite build --config vite.content.config.ts",
 ```
 
-- [ ] **Passo 11: reescrever `public/manifest.json`**
+- [x] **Passo 11: reescrever `public/manifest.json`**
 
 ```json
 {
@@ -374,7 +374,7 @@ Em `package.json`, troque o script `build` por:
 }
 ```
 
-- [ ] **Passo 12: escrever o teste do fake do Chrome** (`src/test/chrome-fake.test.ts`)
+- [x] **Passo 12: escrever o teste do fake do Chrome** (`src/test/chrome-fake.test.ts`)
 
 ```ts
 import { describe, expect, test, vi } from 'vitest'
@@ -414,12 +414,12 @@ describe('chrome fake', () => {
 })
 ```
 
-- [ ] **Passo 13: rodar o teste e confirmar que falha**
+- [x] **Passo 13: rodar o teste e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/test/chrome-fake.test.ts`
 Esperado: FAIL (o módulo `./chrome-fake` não existe).
 
-- [ ] **Passo 14: criar `src/test/chrome-fake.ts`**
+- [x] **Passo 14: criar `src/test/chrome-fake.ts`**
 
 ```ts
 import { vi } from 'vitest'
@@ -525,7 +525,7 @@ export function getStorageSnapshot(): Record<string, unknown> {
 }
 ```
 
-- [ ] **Passo 15: instalar o fake em `vitest.setup.ts`**
+- [x] **Passo 15: instalar o fake em `vitest.setup.ts`**
 
 ```ts
 import '@testing-library/jest-dom/vitest'
@@ -556,12 +556,12 @@ afterEach(() => {
 })
 ```
 
-- [ ] **Passo 16: rodar os testes e confirmar que passam**
+- [x] **Passo 16: rodar os testes e confirmar que passam**
 
 Run: `pnpm vitest run --project unit src/test/chrome-fake.test.ts`
 Esperado: PASS (4 testes).
 
-- [ ] **Passo 17: conferir build e lint**
+- [x] **Passo 17: conferir build e lint**
 
 Run: `pnpm build && ls dist`
 Esperado: o build termina sem erro e `dist` contém `background.js`, `content-script.js`, `popup.html`, `meetings.html`, `manifest.json`, `icons/` e `assets/`.
@@ -569,7 +569,7 @@ Esperado: o build termina sem erro e `dist` contém `background.js`, `content-sc
 Run: `pnpm lint`
 Esperado: sem erros.
 
-- [ ] **Passo 18: commit**
+- [x] **Passo 18: commit**
 
 ```bash
 git add -A
@@ -589,7 +589,7 @@ git commit -m "refactor: reset project base for v2 (build, manifest, shadcn, chr
 
 - Produz: todos os tipos de `types.ts`, `sameLocalDay`, e as funções de `storage.ts` listadas abaixo. Todas as tarefas seguintes usam estes nomes.
 
-- [ ] **Passo 1: criar `src/shared/types.ts`** (código completo)
+- [x] **Passo 1: criar `src/shared/types.ts`** (código completo)
 
 ```ts
 export type Utterance = {
@@ -648,10 +648,7 @@ export const DEFAULT_SETTINGS: Settings = {
 }
 
 export type LiveState =
-  | 'recording'
-  | 'captions-off'
-  | 'captions-unavailable'
-  | 'stopped' // gravação parada só nesta reunião (etapa 2)
+  'recording' | 'captions-off' | 'captions-unavailable' | 'stopped' // gravação parada só nesta reunião (etapa 2)
 
 export type LiveStatus = {
   meetingId: string | null
@@ -702,7 +699,7 @@ export type DiagnosticSummary = {
 }
 ```
 
-- [ ] **Passo 2: escrever os testes de `time.ts`** (`src/shared/time.test.ts`)
+- [x] **Passo 2: escrever os testes de `time.ts`** (`src/shared/time.test.ts`)
 
 ```ts
 import { describe, expect, test } from 'vitest'
@@ -729,7 +726,7 @@ describe('sameLocalDay', () => {
 })
 ```
 
-- [ ] **Passo 3: criar `src/shared/time.ts`**
+- [x] **Passo 3: criar `src/shared/time.ts`**
 
 ```ts
 export function sameLocalDay(a: number, b: number): boolean {
@@ -743,7 +740,7 @@ export function sameLocalDay(a: number, b: number): boolean {
 }
 ```
 
-- [ ] **Passo 4: escrever os testes do storage** (`src/shared/storage.test.ts`)
+- [x] **Passo 4: escrever os testes do storage** (`src/shared/storage.test.ts`)
 
 ```ts
 import { describe, expect, test, vi } from 'vitest'
@@ -935,12 +932,12 @@ describe('diagnostics', () => {
 })
 ```
 
-- [ ] **Passo 5: rodar os testes e confirmar que falham**
+- [x] **Passo 5: rodar os testes e confirmar que falham**
 
 Run: `pnpm vitest run --project unit src/shared`
 Esperado: FAIL nos testes do storage (módulo não existe). Os de `time` passam.
 
-- [ ] **Passo 6: criar `src/shared/storage.ts`** (código completo)
+- [x] **Passo 6: criar `src/shared/storage.ts`** (código completo)
 
 ```ts
 import {
@@ -1116,12 +1113,12 @@ export async function listDiagnostics(): Promise<DiagnosticSummary[]> {
 }
 ```
 
-- [ ] **Passo 7: rodar os testes e confirmar que passam**
+- [x] **Passo 7: rodar os testes e confirmar que passam**
 
 Run: `pnpm vitest run --project unit src/shared`
 Esperado: PASS.
 
-- [ ] **Passo 8: commit**
+- [x] **Passo 8: commit**
 
 ```bash
 git add src/shared
@@ -1149,7 +1146,7 @@ Atende R1.3 e R1.5. Função pura que decide o que fazer quando o texto de um bl
 - `extend`: o Meet cortou o começo do bloco. `text` é o começo antigo mais o texto novo.
 - `split`: o bloco começou uma fala nova. A atual fecha e uma nova começa com `text`.
 
-- [ ] **Passo 1: escrever os testes**
+- [x] **Passo 1: escrever os testes**
 
 ```ts
 import { describe, expect, test } from 'vitest'
@@ -1255,12 +1252,12 @@ describe('mergeCaptionText', () => {
 })
 ```
 
-- [ ] **Passo 2: rodar e confirmar que falha**
+- [x] **Passo 2: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/features/recording/merge-text.test.ts`
 Esperado: FAIL (módulo não existe).
 
-- [ ] **Passo 3: implementar `src/features/recording/merge-text.ts`** (algoritmo completo)
+- [x] **Passo 3: implementar `src/features/recording/merge-text.ts`** (algoritmo completo)
 
 ```ts
 export type MergeKind = 'replace' | 'extend' | 'split'
@@ -1349,12 +1346,12 @@ export function mergeCaptionText(
 }
 ```
 
-- [ ] **Passo 4: rodar e confirmar que passa**
+- [x] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/recording/merge-text.test.ts`
 Esperado: PASS (10 testes).
 
-- [ ] **Passo 5: commit**
+- [x] **Passo 5: commit**
 
 ```bash
 git add src/features/recording/merge-text.ts src/features/recording/merge-text.test.ts
@@ -1392,7 +1389,7 @@ Atende R1.1 a R1.4. Recebe, a cada mudança, a lista de blocos visíveis no Meet
 5. Toda fala aberta cuja chave não apareceu no `sync` atual vira `final: true` e sai do mapa de falas abertas. **Não existe fechamento por tempo.**
 6. Falas finais nunca mudam.
 
-- [ ] **Passo 1: escrever os testes**
+- [x] **Passo 1: escrever os testes**
 
 ```ts
 import { beforeEach, describe, expect, test } from 'vitest'
@@ -1532,12 +1529,12 @@ describe('CaptionTracker', () => {
 })
 ```
 
-- [ ] **Passo 2: rodar e confirmar que falha**
+- [x] **Passo 2: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/features/recording/caption-tracker.test.ts`
 Esperado: FAIL.
 
-- [ ] **Passo 3: implementar `src/features/recording/caption-tracker.ts`**
+- [x] **Passo 3: implementar `src/features/recording/caption-tracker.ts`**
 
 ```ts
 import type { ObservedBlock, Utterance } from '@/shared/types'
@@ -1630,12 +1627,12 @@ export class CaptionTracker {
 }
 ```
 
-- [ ] **Passo 4: rodar e confirmar que passa**
+- [x] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/recording/caption-tracker.test.ts`
 Esperado: PASS (11 testes).
 
-- [ ] **Passo 5: commit**
+- [x] **Passo 5: commit**
 
 ```bash
 git add src/features/recording/caption-tracker.ts src/features/recording/caption-tracker.test.ts
@@ -1663,7 +1660,7 @@ Atende R2.1, R2.2, R2.4 e o ponto em aberto 2 da spec (reunião que passa da mei
 - `parseMeetingCode`: pega o primeiro segmento do `pathname` da URL e devolve-o só se casar com `^[a-z]{3}-[a-z]{4}-[a-z]{3}$`. Ignora query string e hash. URL inválida devolve `null`.
 - `shouldContinueMeeting` devolve `true` se `previous` existir **e** (`sameLocalDay(previous.startedAt, now)` **ou** `now - previous.endedAt <= CONTINUE_GAP_MS`). A segunda condição cobre a reunião que passa da meia-noite.
 
-- [ ] **Passo 1: escrever os testes**
+- [x] **Passo 1: escrever os testes**
 
 ```ts
 import { describe, expect, test } from 'vitest'
@@ -1757,21 +1754,21 @@ describe('shouldContinueMeeting', () => {
 })
 ```
 
-- [ ] **Passo 2: rodar e confirmar que falha**
+- [x] **Passo 2: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/features/recording/meeting-identity.test.ts`
 Esperado: FAIL.
 
-- [ ] **Passo 3: implementar `src/features/recording/meeting-identity.ts`**
+- [x] **Passo 3: implementar `src/features/recording/meeting-identity.ts`**
 
 `parseMeetingCode`: `new URL(url)` dentro de `try/catch` (erro devolve `null`), `pathname.split('/')[1]` testado com a regex. `shouldContinueMeeting`: aplica a regra acima. Exporte `CONTINUE_GAP_MS = 15 * 60 * 1000`.
 
-- [ ] **Passo 4: rodar e confirmar que passa**
+- [x] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/recording/meeting-identity.test.ts`
 Esperado: PASS.
 
-- [ ] **Passo 5: commit**
+- [x] **Passo 5: commit**
 
 ```bash
 git add src/features/recording/meeting-identity.ts src/features/recording/meeting-identity.test.ts
@@ -1866,7 +1863,7 @@ export function readCaptionBlocks(region: HTMLElement): ObservedBlock[] {
 }
 ```
 
-- [ ] **Passo 1: criar as fixtures** (`src/features/recording/__fixtures__/meet-dom.ts`)
+- [x] **Passo 1: criar as fixtures** (`src/features/recording/__fixtures__/meet-dom.ts`)
 
 ```ts
 export const CAPTIONS_REGION_EN = `
@@ -1918,7 +1915,7 @@ export const CAPTIONS_REGION_SEPARATE_AVATAR = `
 </div>`
 ```
 
-- [ ] **Passo 2: escrever os testes** (`src/features/recording/meet-dom.test.ts`)
+- [x] **Passo 2: escrever os testes** (`src/features/recording/meet-dom.test.ts`)
 
 ```ts
 import { beforeEach, describe, expect, test } from 'vitest'
@@ -2012,19 +2009,19 @@ describe('meet-dom', () => {
 })
 ```
 
-- [ ] **Passo 3: rodar e confirmar que falha**
+- [x] **Passo 3: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/features/recording/meet-dom.test.ts`
 Esperado: FAIL.
 
-- [ ] **Passo 4: implementar `src/features/recording/meet-dom.ts`** seguindo as regras e o algoritmo acima.
+- [x] **Passo 4: implementar `src/features/recording/meet-dom.ts`** seguindo as regras e o algoritmo acima.
 
-- [ ] **Passo 5: rodar e confirmar que passa**
+- [x] **Passo 5: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/recording/meet-dom.test.ts`
 Esperado: PASS.
 
-- [ ] **Passo 6: commit**
+- [x] **Passo 6: commit**
 
 ```bash
 git add src/features/recording/meet-dom.ts src/features/recording/meet-dom.test.ts src/features/recording/__fixtures__/meet-dom.ts
@@ -2063,7 +2060,7 @@ Atende R3.2 e R3.3, incluindo a correção do bug atual: depois que as legendas 
 4. Se já passaram mais de `AUTOSTART_GIVE_UP_MS` desde o início, marca `done = true` e para.
 5. Se existe o botão de ligar e o último clique foi há pelo menos `AUTOSTART_RETRY_MS`, clica (`button.click()`) e registra o horário.
 
-- [ ] **Passo 1: escrever os testes**
+- [x] **Passo 1: escrever os testes**
 
 ```ts
 import { beforeEach, describe, expect, test, vi } from 'vitest'
@@ -2151,19 +2148,19 @@ describe('CaptionsAutostart', () => {
 })
 ```
 
-- [ ] **Passo 2: rodar e confirmar que falha**
+- [x] **Passo 2: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/features/recording/captions-autostart.test.ts`
 Esperado: FAIL.
 
-- [ ] **Passo 3: implementar** seguindo as regras. Campos: `startedAt: number | null`, `lastClickAt = Number.NEGATIVE_INFINITY`, `finished = false`, `nowFn`.
+- [x] **Passo 3: implementar** seguindo as regras. Campos: `startedAt: number | null`, `lastClickAt = Number.NEGATIVE_INFINITY`, `finished = false`, `nowFn`.
 
-- [ ] **Passo 4: rodar e confirmar que passa**
+- [x] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/recording/captions-autostart.test.ts`
 Esperado: PASS.
 
-- [ ] **Passo 5: commit**
+- [x] **Passo 5: commit**
 
 ```bash
 git add src/features/recording/captions-autostart.ts src/features/recording/captions-autostart.test.ts
@@ -2205,7 +2202,7 @@ Atende R8.1 e R8.3, e parte do R10.1.
 
 **Regras de `replayDiagnosticLog`:** cria um `CaptionTracker` com ids `r1, r2…`. Mapeia cada `k` para um objeto fixo. Para cada evento `blocks`, chama `sync`. Para cada evento `state` que começa com `region-missing`, chama `sync([], t)`. Ignora eventos `html`. No fim, chama `finalizeAll()` e devolve uma cópia das falas.
 
-- [ ] **Passo 1: criar os cenários** (`src/features/recording/__fixtures__/scenarios.ts`)
+- [x] **Passo 1: criar os cenários** (`src/features/recording/__fixtures__/scenarios.ts`)
 
 Monte cada log com um helper. Os cenários reproduzem o comportamento que já conhecemos do Meet. Quando houver logs reais (R8.4), eles entram aqui também.
 
@@ -2334,7 +2331,7 @@ export const SCENARIOS: Scenario[] = [
 ]
 ```
 
-- [ ] **Passo 2: escrever os testes do replay** (`src/features/recording/replay.test.ts`)
+- [x] **Passo 2: escrever os testes do replay** (`src/features/recording/replay.test.ts`)
 
 ```ts
 import { describe, expect, test } from 'vitest'
@@ -2352,7 +2349,7 @@ describe('replayDiagnosticLog', () => {
 })
 ```
 
-- [ ] **Passo 3: escrever os testes do recorder de diagnóstico** (`src/features/recording/diagnostics.test.ts`)
+- [x] **Passo 3: escrever os testes do recorder de diagnóstico** (`src/features/recording/diagnostics.test.ts`)
 
 ```ts
 import { describe, expect, test } from 'vitest'
@@ -2451,19 +2448,19 @@ describe('DiagnosticRecorder', () => {
 })
 ```
 
-- [ ] **Passo 4: rodar e confirmar que falha**
+- [x] **Passo 4: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/features/recording/diagnostics.test.ts src/features/recording/replay.test.ts`
 Esperado: FAIL.
 
-- [ ] **Passo 5: implementar `diagnostics.ts` e `replay.ts`** seguindo as regras. `toLog()` devolve `structuredClone` do log interno.
+- [x] **Passo 5: implementar `diagnostics.ts` e `replay.ts`** seguindo as regras. `toLog()` devolve `structuredClone` do log interno.
 
-- [ ] **Passo 6: rodar e confirmar que passa**
+- [x] **Passo 6: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/recording/diagnostics.test.ts src/features/recording/replay.test.ts`
 Esperado: PASS. Se algum cenário do replay falhar, o problema está nas Tarefas 3 ou 4: corrija lá, sem mudar o resultado esperado do cenário.
 
-- [ ] **Passo 7: commit**
+- [x] **Passo 7: commit**
 
 ```bash
 git add src/features/recording/diagnostics.ts src/features/recording/replay.ts src/features/recording/__fixtures__/scenarios.ts src/features/recording/diagnostics.test.ts src/features/recording/replay.test.ts
@@ -2567,7 +2564,7 @@ export class Recorder {
 
 **`get code()`:** `meeting?.code ?? blockedCode ?? null`. **`get active()`:** `meeting !== null || blockedCode !== null`. **`get blocked()`:** `blockedCode !== null`. **`get captionsOffByUser()`:** `meeting?.captionsOffByUser ?? false`.
 
-- [ ] **Passo 1: escrever os testes**
+- [x] **Passo 1: escrever os testes**
 
 ```ts
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
@@ -2819,19 +2816,19 @@ describe('Recorder', () => {
 })
 ```
 
-- [ ] **Passo 2: rodar e confirmar que falha**
+- [x] **Passo 2: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/features/recording/recorder.test.ts`
 Esperado: FAIL.
 
-- [ ] **Passo 3: implementar `src/features/recording/recorder.ts`** seguindo todas as regras acima. Use `ReturnType<typeof setTimeout>` e `ReturnType<typeof setInterval>` nos timers.
+- [x] **Passo 3: implementar `src/features/recording/recorder.ts`** seguindo todas as regras acima. Use `ReturnType<typeof setTimeout>` e `ReturnType<typeof setInterval>` nos timers.
 
-- [ ] **Passo 4: rodar e confirmar que passa**
+- [x] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/recording/recorder.test.ts`
 Esperado: PASS (13 testes).
 
-- [ ] **Passo 5: commit**
+- [x] **Passo 5: commit**
 
 ```bash
 git add src/features/recording/recorder.ts src/features/recording/recorder.test.ts
@@ -2873,7 +2870,7 @@ Atende o ponto em aberto 1 da spec: importar como estão, marcadas como formato 
 - JSON inválido: a chave é ignorada e fica no `localStorage`.
 - `importLegacyMeetings` salva cada reunião com `save` e, só depois de todas salvas, remove as `keys` do `localStorage`. Devolve quantas reuniões importou. Se `save` falhar, não remove nada.
 
-- [ ] **Passo 1: escrever os testes**
+- [x] **Passo 1: escrever os testes**
 
 ```ts
 import { beforeEach, describe, expect, test, vi } from 'vitest'
@@ -2943,19 +2940,19 @@ describe('legacy import', () => {
 })
 ```
 
-- [ ] **Passo 2: rodar e confirmar que falha**
+- [x] **Passo 2: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/features/recording/legacy-import.test.ts`
 Esperado: FAIL.
 
-- [ ] **Passo 3: implementar** seguindo as regras. Para listar as chaves, use `for (let i = 0; i < ls.length; i++) ls.key(i)` e copie a lista antes de remover.
+- [x] **Passo 3: implementar** seguindo as regras. Para listar as chaves, use `for (let i = 0; i < ls.length; i++) ls.key(i)` e copie a lista antes de remover.
 
-- [ ] **Passo 4: rodar e confirmar que passa**
+- [x] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/recording/legacy-import.test.ts`
 Esperado: PASS.
 
-- [ ] **Passo 5: commit**
+- [x] **Passo 5: commit**
 
 ```bash
 git add src/features/recording/legacy-import.ts src/features/recording/legacy-import.test.ts
@@ -3073,7 +3070,7 @@ void importLegacyMeetings(window.localStorage, saveMeeting).catch(
 )
 ```
 
-- [ ] **Passo 1: escrever os testes**
+- [x] **Passo 1: escrever os testes**
 
 ```ts
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
@@ -3271,24 +3268,24 @@ describe('content controller', () => {
 })
 ```
 
-- [ ] **Passo 2: rodar e confirmar que falha**
+- [x] **Passo 2: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/features/recording/content-controller.test.ts`
 Esperado: FAIL.
 
-- [ ] **Passo 3: implementar `content-controller.ts`** seguindo o comportamento acima, e reescrever `src/entries/content-script.ts` com o código completo.
+- [x] **Passo 3: implementar `content-controller.ts`** seguindo o comportamento acima, e reescrever `src/entries/content-script.ts` com o código completo.
 
-- [ ] **Passo 4: rodar e confirmar que passa**
+- [x] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/recording`
 Esperado: PASS em todos os testes da pasta.
 
-- [ ] **Passo 5: conferir o build**
+- [x] **Passo 5: conferir o build**
 
 Run: `pnpm build && head -c 300 dist/content-script.js`
 Esperado: o arquivo começa com uma função autoexecutável (`(function`, ou o `"use strict"` seguido dela) e não contém `import `. Confira com `grep -c "^import " dist/content-script.js`: esperado `0`.
 
-- [ ] **Passo 6: commit**
+- [x] **Passo 6: commit**
 
 ```bash
 git add src/features/recording/content-controller.ts src/features/recording/content-controller.test.ts src/entries/content-script.ts
@@ -3352,7 +3349,7 @@ onStorageKeysChange([STORAGE_KEYS.settings, STORAGE_KEYS.live], () => {
 })
 ```
 
-- [ ] **Passo 1: escrever os testes**
+- [x] **Passo 1: escrever os testes**
 
 ```ts
 import { describe, expect, test } from 'vitest'
@@ -3418,19 +3415,19 @@ describe('applyBadge', () => {
 })
 ```
 
-- [ ] **Passo 2: rodar e confirmar que falha**
+- [x] **Passo 2: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/features/extension-toggle/badge.test.ts`
 Esperado: FAIL.
 
-- [ ] **Passo 3: implementar `badge.ts` e reescrever `background.ts`.**
+- [x] **Passo 3: implementar `badge.ts` e reescrever `background.ts`.**
 
-- [ ] **Passo 4: rodar e confirmar que passa**
+- [x] **Passo 4: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/extension-toggle/badge.test.ts`
 Esperado: PASS (5 testes).
 
-- [ ] **Passo 5: commit**
+- [x] **Passo 5: commit**
 
 ```bash
 git add src/features/extension-toggle/badge.ts src/features/extension-toggle/badge.test.ts src/entries/background.ts
@@ -3485,7 +3482,7 @@ Fala sem nome não mostra o nome nem os dois-pontos. Fala com `final === false`:
 - Para cada sessão `i > 0`, insere antes da primeira fala com `startedAt >= sessions[i].startedAt` um `<li role="separator">` com o texto `Saiu às {formatTime(sessions[i-1].endedAt)} · voltou às {formatTime(sessions[i].startedAt)}`. Se nenhuma fala for posterior, a marcação vai no fim.
 - Sem falas: `<p>` com `Nenhuma fala gravada ainda.`
 
-- [ ] **Passo 1: escrever os testes de `format`**
+- [x] **Passo 1: escrever os testes de `format`**
 
 ```ts
 import { describe, expect, test } from 'vitest'
@@ -3534,7 +3531,7 @@ describe('format', () => {
 })
 ```
 
-- [ ] **Passo 2: escrever os testes do `TranscriptView`**
+- [x] **Passo 2: escrever os testes do `TranscriptView`**
 
 ```tsx
 import { render, screen } from '@testing-library/react'
@@ -3623,23 +3620,23 @@ describe('TranscriptView', () => {
 
 Observação: `getAllByRole('listitem')` não inclui o separador, porque ele tem `role="separator"`.
 
-- [ ] **Passo 3: rodar e confirmar que falha**
+- [x] **Passo 3: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/lib src/components/transcript`
 Esperado: FAIL.
 
-- [ ] **Passo 4: implementar** `format.ts`, `download.ts`, `utterance-item.tsx` e `transcript-view.tsx`. Use `cn()` para as classes condicionais.
+- [x] **Passo 4: implementar** `format.ts`, `download.ts`, `utterance-item.tsx` e `transcript-view.tsx`. Use `cn()` para as classes condicionais.
 
 Em `format.ts`, monte as strings com os componentes da data (`getDate`, `getMonth`, `getFullYear`, `getHours`, `getMinutes`) e `padStart(2, '0')`, **não** com `Intl.DateTimeFormat`. O `Intl` em pt-BR coloca uma vírgula (`"14/11/2026, 10:02"`), e os testes esperam `"14/11/2026 10:02"`.
 
-- [ ] **Passo 5: criar a story** `transcript-view.stories.tsx` com três estados: `Padrao` (algumas falas), `ComSaidaEVolta` (duas sessões) e `Vazio`.
+- [x] **Passo 5: criar a story** `transcript-view.stories.tsx` com três estados: `Padrao` (algumas falas), `ComSaidaEVolta` (duas sessões) e `Vazio`.
 
-- [ ] **Passo 6: rodar e confirmar que passa**
+- [x] **Passo 6: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/lib src/components/transcript`
 Esperado: PASS.
 
-- [ ] **Passo 7: commit**
+- [x] **Passo 7: commit**
 
 ```bash
 git add src/lib src/components/transcript
@@ -3715,7 +3712,7 @@ type ExtensionToggleProps = {
 
 **`src/entries/popup.tsx`:** igual ao provisório da Tarefa 1, mas renderizando `<PopupApp />`.
 
-- [ ] **Passo 1: escrever os testes de `disableExtension`**
+- [x] **Passo 1: escrever os testes de `disableExtension`**
 
 ```ts
 import { describe, expect, test } from 'vitest'
@@ -3796,7 +3793,7 @@ describe('disableExtension', () => {
 })
 ```
 
-- [ ] **Passo 2: escrever os testes do `ExtensionToggle`**
+- [x] **Passo 2: escrever os testes do `ExtensionToggle`**
 
 ```tsx
 import { render, screen } from '@testing-library/react'
@@ -3888,7 +3885,7 @@ describe('ExtensionToggle', () => {
 
 Se `@testing-library/user-event` não estiver instalado, adicione: `pnpm add -D @testing-library/user-event`.
 
-- [ ] **Passo 3: escrever os testes do `LiveStatusLine`**
+- [x] **Passo 3: escrever os testes do `LiveStatusLine`**
 
 ```tsx
 import { render, screen } from '@testing-library/react'
@@ -3950,19 +3947,19 @@ describe('LiveStatusLine', () => {
 })
 ```
 
-- [ ] **Passo 4: rodar e confirmar que falha**
+- [x] **Passo 4: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/features/extension-toggle src/features/popup`
 Esperado: FAIL (exceto o `badge.test.ts`, que já passa).
 
-- [ ] **Passo 5: implementar** todos os arquivos da tarefa seguindo as regras e textos acima.
+- [x] **Passo 5: implementar** todos os arquivos da tarefa seguindo as regras e textos acima.
 
-- [ ] **Passo 6: rodar e confirmar que passa**
+- [x] **Passo 6: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/extension-toggle src/features/popup`
 Esperado: PASS.
 
-- [ ] **Passo 7: commit**
+- [x] **Passo 7: commit**
 
 ```bash
 git add src/features/extension-toggle src/features/popup src/entries/popup.tsx package.json pnpm-lock.yaml
@@ -4022,7 +4019,7 @@ O item selecionado tem `aria-current="true"` e fundo `bg-accent`.
 
 **`src/entries/meetings.tsx`:** igual ao provisório, renderizando `<MeetingsApp />`.
 
-- [ ] **Passo 1: escrever os testes da lista**
+- [x] **Passo 1: escrever os testes da lista**
 
 ```tsx
 import { render, screen } from '@testing-library/react'
@@ -4091,7 +4088,7 @@ describe('MeetingList', () => {
 })
 ```
 
-- [ ] **Passo 2: escrever o teste de integração da página**
+- [x] **Passo 2: escrever o teste de integração da página**
 
 ```tsx
 import { render, screen } from '@testing-library/react'
@@ -4145,26 +4142,26 @@ describe('MeetingsApp', () => {
 })
 ```
 
-- [ ] **Passo 3: rodar e confirmar que falha**
+- [x] **Passo 3: rodar e confirmar que falha**
 
 Run: `pnpm vitest run --project unit src/features/meetings`
 Esperado: FAIL.
 
-- [ ] **Passo 4: implementar** todos os arquivos da tarefa seguindo o layout e os textos acima. Componentes de interface só do shadcn (`ScrollArea`, `Badge`, `Switch`, `Button`, `Separator`).
+- [x] **Passo 4: implementar** todos os arquivos da tarefa seguindo o layout e os textos acima. Componentes de interface só do shadcn (`ScrollArea`, `Badge`, `Switch`, `Button`, `Separator`).
 
-- [ ] **Passo 5: criar a story** `meeting-list.stories.tsx` com os estados `Padrao`, `ComAoVivo` e `Vazia`.
+- [x] **Passo 5: criar a story** `meeting-list.stories.tsx` com os estados `Padrao`, `ComAoVivo` e `Vazia`.
 
-- [ ] **Passo 6: rodar e confirmar que passa**
+- [x] **Passo 6: rodar e confirmar que passa**
 
 Run: `pnpm vitest run --project unit src/features/meetings`
 Esperado: PASS.
 
-- [ ] **Passo 7: suíte completa, lint e build**
+- [x] **Passo 7: suíte completa, lint e build**
 
 Run: `pnpm vitest run && pnpm lint && pnpm build`
 Esperado: todos os testes passam (unidade e Storybook), lint sem erros e build sem erros.
 
-- [ ] **Passo 8: commit**
+- [x] **Passo 8: commit**
 
 ```bash
 git add src/features/meetings src/entries/meetings.tsx
