@@ -31,6 +31,8 @@ describe('MeetingList', () => {
   test('mostra título, data, duração e selos', () => {
     render(
       <MeetingList
+        selection={new Set()}
+        onToggleSelect={() => {}}
         meetings={meetings}
         selectedId="b"
         liveMeetingId="b"
@@ -50,6 +52,8 @@ describe('MeetingList', () => {
     const onSelect = vi.fn()
     render(
       <MeetingList
+        selection={new Set()}
+        onToggleSelect={() => {}}
         meetings={meetings}
         selectedId="b"
         liveMeetingId={null}
@@ -60,5 +64,28 @@ describe('MeetingList', () => {
       .setup()
       .click(screen.getByRole('button', { name: /Reunião antiga/ }))
     expect(onSelect).toHaveBeenCalledWith('a')
+  })
+
+  test('marcar uma reunião e não permitir marcar a que está ao vivo', async () => {
+    const onToggleSelect = vi.fn()
+    render(
+      <MeetingList
+        meetings={meetings}
+        selectedId="b"
+        liveMeetingId="b"
+        selection={new Set()}
+        onSelect={() => {}}
+        onToggleSelect={onToggleSelect}
+      />
+    )
+    expect(
+      screen.getByRole('checkbox', { name: 'Selecionar Daily do time' })
+    ).toBeDisabled()
+    await userEvent
+      .setup()
+      .click(
+        screen.getByRole('checkbox', { name: 'Selecionar Reunião antiga' })
+      )
+    expect(onToggleSelect).toHaveBeenCalledWith('a')
   })
 })

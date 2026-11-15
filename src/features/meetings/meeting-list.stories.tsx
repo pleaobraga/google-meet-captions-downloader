@@ -29,7 +29,14 @@ const meetings: MeetingSummary[] = [
 const meta = {
   title: 'Reuniões/MeetingList',
   component: MeetingList,
-  args: { meetings, selectedId: 'b', liveMeetingId: null, onSelect: () => {} },
+  args: {
+    meetings,
+    selectedId: 'b',
+    liveMeetingId: null,
+    selection: new Set<string>(),
+    onSelect: () => {},
+    onToggleSelect: () => {},
+  },
 } satisfies Meta<typeof MeetingList>
 
 export default meta
