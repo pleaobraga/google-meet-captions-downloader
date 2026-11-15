@@ -1,8 +1,10 @@
 import { describe, expect, test } from 'vitest'
 import {
   displayTitle,
+  formatDate,
   formatDateTime,
   formatDuration,
+  formatIsoDate,
   formatTime,
 } from './format'
 
@@ -40,5 +42,10 @@ describe('format', () => {
       'Reunião abc-defg-hij'
     )
     expect(displayTitle({ title: '', code: '' })).toBe('Reunião sem título')
+  })
+
+  test('formatDate e formatIsoDate', () => {
+    expect(formatDate(at('2026-11-04T10:02:00-03:00'))).toBe('04/11/2026')
+    expect(formatIsoDate(at('2026-11-04T10:02:00-03:00'))).toBe('2026-11-04')
   })
 })

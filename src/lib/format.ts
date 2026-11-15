@@ -6,10 +6,21 @@ export function formatTime(ms: number): string {
   return `${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
+/** "14/11/2026" no fuso local. */
+export function formatDate(ms: number): string {
+  const d = new Date(ms)
+  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`
+}
+
+/** "2026-11-14" no fuso local. */
+export function formatIsoDate(ms: number): string {
+  const d = new Date(ms)
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+}
+
 /** "14/11/2026 10:02" no fuso local. */
 export function formatDateTime(ms: number): string {
-  const d = new Date(ms)
-  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${formatTime(ms)}`
+  return `${formatDate(ms)} ${formatTime(ms)}`
 }
 
 /** "32 min" ou "1h 05min". */
