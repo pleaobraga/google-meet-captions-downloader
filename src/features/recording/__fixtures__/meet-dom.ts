@@ -45,3 +45,14 @@ export const CAPTIONS_REGION_SEPARATE_AVATAR = `
     <div class="said">oi pessoal</div>
   </div>
 </div>`
+
+/** Legendas ligadas, mas ninguém falando: o Meet tira a região da página. */
+export const MEET_CAPTIONS_SILENT_EN = `
+<div data-meeting-title="Daily do time">Daily do time</div>
+<button aria-label="Turn off captions (c)"></button>
+<button aria-label="Leave call"></button>`
+
+/** Em chamada sem botão de legendas reconhecível nem região: leitura falhou. */
+export const MEET_CAPTIONS_UNREADABLE_EN = `
+<div data-meeting-title="Daily do time">Daily do time</div>
+<button aria-label="Leave call"></button>`

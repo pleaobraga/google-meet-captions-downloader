@@ -18,6 +18,7 @@ import {
   findCaptionsRegion,
   findTurnOnCaptionsButton,
   getMeetingTitle,
+  isCaptionsOn,
   isInCall,
   readCaptionBlocks,
 } from './meet-dom'
@@ -198,7 +199,17 @@ export function startContentController(deps: ControllerDeps): {
 
     autostart.tick(deps.doc)
     const region = findCaptionsRegion(deps.doc)
-    let blocks = region ? readCaptionBlocks(region) : null
+    const captionsState: CaptionsState = findTurnOnCaptionsButton(deps.doc)
+      ? 'off'
+      : isCaptionsOn(deps.doc)
+        ? 'on'
+        : 'unknown'
+    // Legendas ligadas sem região: ninguém está falando e o Meet tirou a região da página.
+    let blocks = region
+      ? readCaptionBlocks(region)
+      : captionsState === 'on'
+        ? []
+        : null
     // Região com texto mas nenhum bloco reconhecido: a leitura falhou (o Meet mudou a página).
     if (
       region &&
@@ -208,11 +219,6 @@ export function startContentController(deps: ControllerDeps): {
     ) {
       blocks = null
     }
-    const captionsState: CaptionsState = findTurnOnCaptionsButton(deps.doc)
-      ? 'off'
-      : region
-        ? 'on'
-        : 'unknown'
     recorder.observe(blocks, captionsState, region)
     ensureFloatingButton(deps.doc, onFloatingButtonClick)
     // O Meet pode recriar a região de legendas: esconde de novo a cada ciclo.

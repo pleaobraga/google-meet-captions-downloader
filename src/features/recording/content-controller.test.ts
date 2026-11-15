@@ -11,6 +11,8 @@ import {
 } from '@/shared/storage'
 import {
   MEET_CAPTIONS_OFF_EN,
+  MEET_CAPTIONS_SILENT_EN,
+  MEET_CAPTIONS_UNREADABLE_EN,
   MEET_IN_CALL_EN,
   MEET_LANDING,
 } from './__fixtures__/meet-dom'
@@ -254,6 +256,27 @@ describe('content controller', () => {
     expect(
       controller!.store.getSnapshot().utterances.map((u) => u.text)
     ).toContain('combinado então')
+  })
+
+  test('silêncio com as legendas ligadas não é falha de leitura', async () => {
+    goTo('/abc-defg-hij')
+    document.body.innerHTML = MEET_IN_CALL_EN
+    await start()
+    await vi.advanceTimersByTimeAsync(1_500)
+    document.body.innerHTML = MEET_CAPTIONS_SILENT_EN
+    await vi.advanceTimersByTimeAsync(60_000)
+    expect((await getLiveStatus())?.state).toBe('recording')
+    expect(controller!.store.getSnapshot().status).toBe('recording')
+    const [summary] = await listMeetings()
+    expect(summary.utteranceCount).toBe(2)
+  })
+
+  test('sem região nem botão de legendas por 20 s, avisa que não consegue ler', async () => {
+    goTo('/abc-defg-hij')
+    document.body.innerHTML = MEET_CAPTIONS_UNREADABLE_EN
+    await start()
+    await vi.advanceTimersByTimeAsync(25_000)
+    expect((await getLiveStatus())?.state).toBe('captions-unavailable')
   })
 
   test('a store fica ociosa fora de reunião', async () => {
