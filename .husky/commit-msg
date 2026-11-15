@@ -1,1 +1,3 @@
-.git/hooks/commit-msg $1
+# Valida a mensagem de commit (Conventional Commits) com o git-commit-msg-linter
+# instalado neste projeto. O script lê a mensagem do COMMIT_EDITMSG do git.
+node -e "require(require.resolve('commit-msg-linter/commit-msg-linter.js', { paths: [require.resolve('git-commit-msg-linter')] }))"
