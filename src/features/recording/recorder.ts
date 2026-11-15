@@ -92,6 +92,23 @@ export class Recorder {
     return this.meeting?.captionsOffByUser ?? false
   }
 
+  /**
+   * Libera o bloqueio quando a outra aba parou de mandar heartbeat (por exemplo,
+   * o status ficou para trás depois de recarregar a página).
+   */
+  async refreshBlocked(): Promise<void> {
+    const code = this.blockedCode
+    if (code === null) return
+    const live = await getLiveStatus(this.options.now())
+    if (
+      !live ||
+      live.code !== code ||
+      live.tabToken === this.options.tabToken
+    ) {
+      this.blockedCode = null
+    }
+  }
+
   async join(code: string, title: string): Promise<void> {
     const now = this.options.now()
 

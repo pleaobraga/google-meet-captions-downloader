@@ -184,6 +184,7 @@ export function startContentController(deps: ControllerDeps): {
     }
     await clearStopped()
 
+    if (recorder.blocked) await recorder.refreshBlocked()
     if (recorder.active && (!inCall || recorder.code !== code)) {
       await recorder.leave()
     }

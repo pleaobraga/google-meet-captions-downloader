@@ -5,6 +5,7 @@ import {
   getSettings,
   listMeetings,
   resumeRecording,
+  setLiveStatus,
   stopRecording,
   updateSettings,
 } from '@/shared/storage'
@@ -322,5 +323,28 @@ describe('content controller', () => {
         (await getMeeting(summary.id))?.utterances.map((u) => u.text)
       ).toContain('combinado então')
     })
+  })
+
+  test('status deixado por uma página anterior não bloqueia a gravação para sempre', async () => {
+    await setLiveStatus({
+      meetingId: null,
+      code: 'abc-defg-hij',
+      title: 'Daily do time',
+      since: Date.now(),
+      heartbeatAt: Date.now(),
+      state: 'recording',
+      utteranceCount: 0,
+      tabToken: 'pagina-anterior',
+    })
+    goTo('/abc-defg-hij')
+    document.body.innerHTML = MEET_IN_CALL_EN
+    await start()
+    await vi.advanceTimersByTimeAsync(1_500)
+    expect(await listMeetings()).toEqual([])
+
+    // A página anterior não manda mais heartbeat: depois de 45 s o status vence.
+    await vi.advanceTimersByTimeAsync(46_000)
+    expect((await listMeetings())[0]?.utteranceCount).toBe(2)
+    expect((await getLiveStatus())?.tabToken).toBe('tab-1')
   })
 })
