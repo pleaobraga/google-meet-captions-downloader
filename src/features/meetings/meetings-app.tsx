@@ -72,7 +72,14 @@ export function MeetingsApp() {
         )}
         {meeting && (
           <ScrollArea className="min-h-0 flex-1">
-            <MeetingDetail meeting={meeting} />
+            <MeetingDetail
+              meeting={meeting}
+              isLive={meeting.id === live?.meetingId}
+              myName=""
+              onRename={() => {}}
+              onDelete={() => {}}
+              onDownload={() => {}}
+            />
           </ScrollArea>
         )}
       </main>
