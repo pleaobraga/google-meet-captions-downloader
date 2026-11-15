@@ -7,7 +7,7 @@
     "default_popup": "popup.html",
     "default_title": "Meet Captions"
   },
-  "permissions": ["storage", "unlimitedStorage"],
+  "permissions": ["storage", "unlimitedStorage", "alarms"],
   "background": {
     "service_worker": "background.js",
     "type": "module"
