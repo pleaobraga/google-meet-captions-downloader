@@ -31,25 +31,25 @@ Atende R10.5.
 
 **Situação atual:** o `.husky/commit-msg` chama `.git/hooks/commit-msg $1`, e esse arquivo aponta para a pasta de outro projeto (`meeting-record-extension`). O resultado é um erro de `cat` e nenhuma validação.
 
-- [ ] **Passo 1: confirmar o problema**
+- [x] **Passo 1: confirmar o problema**
 
 Run: `cat .husky/commit-msg; cat .git/hooks/commit-msg | head -5; ls node_modules/git-commit-msg-linter/`
 Anote onde fica o script principal do pacote (esperado: `node_modules/git-commit-msg-linter/commit-msg-linter.js`).
 
-- [ ] **Passo 2: apontar o hook para o pacote instalado neste projeto**
+- [x] **Passo 2: apontar o hook para o pacote instalado neste projeto**
 
 Substitua o conteúdo de `.husky/commit-msg` por (ajuste o caminho se o Passo 1 mostrou outro nome de arquivo):
 
 ```sh
-node node_modules/git-commit-msg-linter/commit-msg-linter.js "$1"
+node -e "require(require.resolve('commit-msg-linter/commit-msg-linter.js', { paths: [require.resolve('git-commit-msg-linter')] }))"
 ```
 
-- [ ] **Passo 3: verificar com uma mensagem errada**
+- [x] **Passo 3: verificar com uma mensagem errada**
 
 Run: `git commit --allow-empty -m "mensagem fora do padrão"`
 Esperado: o commit é **recusado**, com a explicação do formato.
 
-- [ ] **Passo 4: verificar com uma mensagem certa**
+- [x] **Passo 4: verificar com uma mensagem certa**
 
 Run: `git add .husky/commit-msg && git commit -m "chore: fix commit message validation hook"`
 Esperado: o commit é aceito, sem erro de `cat`.
@@ -66,7 +66,7 @@ Atende R10.2.
 
 - Criar: `.github/workflows/ci.yml`
 
-- [ ] **Passo 1: criar o workflow** (código completo)
+- [x] **Passo 1: criar o workflow** (código completo)
 
 ```yaml
 name: CI
@@ -95,12 +95,12 @@ jobs:
 
 O workflow lê a versão do Node do campo `engines.node` e a do pnpm do campo `packageManager`, os dois no `package.json`. A etapa 0 já preencheu esses campos. Confira que existem antes de continuar. Se a etapa 0 atualizou as ações do GitHub para versões principais mais novas (`actions/checkout`, `actions/setup-node`, `pnpm/action-setup`), use a última versão de cada uma.
 
-- [ ] **Passo 2: conferir localmente os mesmos comandos**
+- [x] **Passo 2: conferir localmente os mesmos comandos**
 
 Run: `pnpm install --frozen-lockfile && pnpm lint && pnpm vitest run && pnpm build`
 Esperado: tudo passa.
 
-- [ ] **Passo 3: commit**
+- [x] **Passo 3: commit**
 
 ```bash
 git add .github/workflows/ci.yml
@@ -119,22 +119,22 @@ Atende R10.3 e R10.4.
 
 - Modificar: `package.json`, `README.md`, e o que a limpeza encontrar
 
-- [ ] **Passo 1: procurar dependências e código sem uso**
+- [x] **Passo 1: procurar dependências e código sem uso**
 
 Run: `pnpm dlx knip`
 Para cada dependência ou arquivo apontado como não usado, confirme com uma busca (`grep -rn "nome" src .storybook *.ts`) antes de remover. **Não remova:** `@mdx-js/react` (o Storybook usa), `next-themes` (o `sonner` do shadcn usa), `tw-animate-css` (o CSS importa) e os componentes de `src/components/ui` em uso.
 
-- [ ] **Passo 2: conferir as permissões**
+- [x] **Passo 2: conferir as permissões**
 
 Run: `cat public/manifest.json`
 Esperado: `permissions` é exatamente `["storage", "unlimitedStorage", "alarms"]`, e não existem `host_permissions` nem `web_accessible_resources`.
 
-- [ ] **Passo 3: procurar restos**
+- [x] **Passo 3: procurar restos**
 
 Run: `grep -rn "console.log\|TODO\|FIXME\|resize-video\|captionText_" src --include=*.ts --include=*.tsx`
 Esperado: só as ocorrências de `captionText_` em `legacy-import.ts` e no teste dele. Remova o resto.
 
-- [ ] **Passo 4: reescrever o `README.md`**
+- [x] **Passo 4: reescrever o `README.md`**
 
 Mantenha o título, o gif (se ainda representar a extensão; senão, remova a seção e avise o usuário para gravar outro), a seção de instalação e o autor. Reescreva o resto com estas seções, em português:
 
@@ -146,12 +146,12 @@ Mantenha o título, o gif (se ainda representar a extensão; senão, remova a se
 6. **Desenvolvimento:** comandos (`pnpm install`, `pnpm build`, `pnpm test`, `pnpm lint`, `pnpm storybook`), como carregar a pasta `dist` em `chrome://extensions`, e os links para o documento de requisitos e o `CLAUDE.md`.
 7. **Quando a leitura das legendas parar de funcionar:** ligar o modo de diagnóstico, participar de uma reunião, baixar o arquivo, e ajustar `src/features/recording/meet-dom.ts`, acrescentando o arquivo como cenário de teste.
 
-- [ ] **Passo 5: conferir tudo**
+- [x] **Passo 5: conferir tudo**
 
 Run: `pnpm vitest run && pnpm lint && pnpm build`
 Esperado: tudo passa.
 
-- [ ] **Passo 6: commit**
+- [x] **Passo 6: commit**
 
 ```bash
 git add -A
